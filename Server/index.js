@@ -16,10 +16,15 @@ app.use('/uploads', express.static('uploads'));
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
-mongoose.connect('mongodb+srv://dhruvsanghavi000:Y4Gx0re0bQXtBRYJ@cluster0.vnncwzl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp')
-
+// mongoose.connect('mongodb+srv://dhruvsanghavi000:Y4Gx0re0bQXtBRYJ@cluster0.vnncwzl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp')
 //dhruvsanghavi000 
 //Y4Gx0re0bQXtBRYJ
+
+mongoose.connect('mongodb+srv://saish:kTtDJDDxGUIZnqtK@snapsync.lqlcj.mongodb.net/?retryWrites=true&w=majority&appName=SnapSync')
+
+//saish
+//kTtDJDDxGUIZnqtK
+
 app.use(cors({
     origin: 'http://localhost:3000',
   }));

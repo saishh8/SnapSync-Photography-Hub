@@ -45,3 +45,14 @@
 /* Add this CSS to your stylesheets to control image sizes and adjust padding */
 
 /* Set a fixed size for the images in the grid */
+
+.btn-outline-primary:hover {
+    background-color: #007bff; /* Blue background on hover */
+    color: white; /* Text color */
+  }
+  
+  .btn-primary {
+    background-color: #007bff; /* Blue background */
+    color: white; /* Text color */
+  }
+  
