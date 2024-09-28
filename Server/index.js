@@ -457,17 +457,19 @@ app.put('/updateProfile', async (req, res) => {
   });
   
 
-  app.get('/bookings/:userId', async (req, res) => {
-    const id = req.params.id;
 
-    try {
-        const bookings = await Bookings.find({ id: id });
 
-        res.status(200).json(bookings);
-    } catch (error) {
-        console.error('Error fetching bookings:', error);
-        res.status(500).json({ error: 'Error fetching bookings' });
-    }
+app.get('/bookings/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+      const bookings = await Bookings.find({ userId: userId });
+
+      res.status(200).json(bookings);
+  } catch (error) {
+      console.error('Error fetching bookings:', error);
+      res.status(500).json({ error: 'Error fetching bookings' });
+  }
 });
   
 
