@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link,useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
 
@@ -12,10 +12,16 @@ export default function RegisterPage() {
     const [portfolio,setPortfolio] = useState('')
     const [contact,setContact] =useState('')
 
+    const navigate = useNavigate();
     
     
     async function registerUser(ev) {
         ev.preventDefault();
+
+        if(!name || !email || !password || !address || !address || !portfolio || !contact){
+          alert("Please fill all the details before registering.");
+          return;
+        }
         try {
           await axios.post('/register', {
             name,
@@ -26,6 +32,7 @@ export default function RegisterPage() {
             contact
           });
           alert('Registration successful. Now you can log in');
+          navigate('/login')
         } catch (e) {
           alert('Registration failed. Please try again later');
         }

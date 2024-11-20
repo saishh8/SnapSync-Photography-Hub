@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate} from 'react-router-dom';
 import axios from 'axios'; // Import Axios for making HTTP requests
 import styles from '../styles/Username.module.css'
 import extend from '../styles/Profile.module.css'
@@ -14,6 +14,8 @@ function SignIn() {
     address: '',
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -24,11 +26,20 @@ function SignIn() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const {fname,lname,contact,email,password,address} = formData;
+    if(!fname || !lname || !contact || !email || !password || !address){
+
+      alert("Please fill in all fields before registering.")
+      return;
+    }
     // Send a POST request to your server's registration endpoint
     axios.post('/uregister', formData)
       .then((response) => {
         // Handle successful registration (e.g., redirect to a login page)
         console.log('User registered:', response.data);
+        alert('Registration successful. Now you can log in');
+        navigate('/usign');
       })
       .catch((error) => {
         // Handle registration error (e.g., display an error message)

@@ -27,7 +27,19 @@ export default function Login(){
           }
           
         } catch (e) {
-          alert('Login failed');
+          if (e.response && e.response.status === 403) {
+            // Handle unverified user case
+            alert('You are not verified. Please wait till your account is verified to log in.');
+          } else if (e.response && e.response.status === 422) {
+            // Handle incorrect password case
+            alert('Incorrect password. Please try again.');
+          } else if (e.response && e.response.status === 404) {
+            // Handle user not found case
+            alert('User not found. Please check your email.');
+          } else {
+            // Handle other errors
+            alert('Login failed. Please try again later.');
+          }
         }
       }
 
