@@ -15,7 +15,7 @@ function Desc() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [price, setPrice] = useState(null);
-  const [daterror, setDaterror] = useState(false); // Track date errors
+  // const [daterror, setDaterror] = useState(false); // Track date errors
   const [showAllPhotos, setShowAllPhotos] = useState(false);
 
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(null); //highlight selected service
@@ -32,12 +32,12 @@ function Desc() {
   }, [id]);
 
   useEffect(() => {
-    if (startDate && endDate && selectedService.price && !daterror) {
+    if (startDate && endDate && selectedService.price) {
       calculatePrice(startDate, endDate, selectedService.price);
     } else {
       setPrice(null); // Hide price when dates are invalid or not selected
     }
-  }, [startDate, endDate, selectedService, daterror]);
+  }, [startDate, endDate, selectedService]);
 
   const handleServiceChange = (event, service, index) => {
     setSelectedService({
@@ -56,30 +56,35 @@ function Desc() {
     setPrice(totalPrice);
   };
 
-  const handleStartDateChange = (event) => {
-    const selectedStartDate = event.target.value;
-    setStartDate(selectedStartDate);
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1); // Set tomorrow's date
 
-    if (endDate && new Date(selectedStartDate) > new Date(endDate)) {
-      setDaterror(true); // Set error if start date is after end date
-    } else {
-      setDaterror(false);
+  // Format the date in YYYY-MM-DD format (HTML input date format)
+  const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+
+  // Ensure that end date is greater than or equal to the start date
+  const handleStartDateChange = (e) => {
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
+
+    // If the end date is before the new start date, reset the end date
+    if (endDate && newStartDate > endDate) {
+      setEndDate(newStartDate);
     }
   };
 
-  const handleEndDateChange = (event) => {
-    const selectedEndDate = event.target.value;
-    setEndDate(selectedEndDate);
-
-    if (startDate && new Date(startDate) > new Date(selectedEndDate)) {
-      setDaterror(true); // Set error if end date is before start date
+  const handleEndDateChange = (e) => {
+    const newEndDate = e.target.value;
+    if (newEndDate >= startDate) {
+      setEndDate(newEndDate);
     } else {
-      setDaterror(false);
+      alert('End date cannot be before the start date.');
     }
   };
 
   const makePayment = async () => {
-    if (daterror || !selectedService.price || !startDate || !endDate) {
+    if (!selectedService.price || !startDate || !endDate) {
       return;
     }
 
@@ -246,25 +251,41 @@ function Desc() {
         <div>
           <div className="bg-white shadow p-4 rounded-2xl">
             <div className="text-2xl text-center">
-              Price: {selectedService.price && !daterror ? `₹${price || selectedService.price}` : 'Select a service and valid dates to see the price'}
+              Price: {selectedService.price ? `₹${price || selectedService.price}` : 'Select a service and valid dates to see the price'}
             </div>
             <div className="border rounded-2xl mt-4">
               <div className="flex">
                 <div className="py-3 px-4">
                   <label>Start Date</label>
-                  <input type="date" onChange={handleStartDateChange} />
+                  <input
+            type="date"
+            id="start-date"
+            name="start-date"
+            value={startDate}
+            onChange={handleStartDateChange}
+            min={tomorrowFormatted}  // Start date must be at least tomorrow
+            style={{ padding: '8px', width: '200px', marginLeft: '10px' }}
+          />
                 </div>
                 <div className="py-3 px-4 border-l">
                   <label>End Date</label>
-                  <input type="date" onChange={handleEndDateChange} />
+                  <input
+            type="date"
+            id="end-date"
+            name="end-date"
+            value={endDate}
+            onChange={handleEndDateChange}
+            min={startDate}  // End date must be after or equal to start date
+            style={{ padding: '8px', width: '200px', marginLeft: '10px' }}
+          />
                 </div>
               </div>
             </div>
-            {daterror && <div style={{ color: 'red' }}>End date must be after the start date</div>}
+            {/* {daterror && <div style={{ color: 'red' }}>End date must be after the start date</div>} */}
             <button
               onClick={makePayment}
               className="primary mt-4"
-              disabled={daterror || !price}
+              disabled={!price} //daterror
             >
               Book this Photographer
             </button>
