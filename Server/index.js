@@ -30,7 +30,7 @@ app.use(cors({
   }));
 
 app.get('/test',(req,res)=>{
-    res.json('test oook');
+    res.json('test OK');
 });
 
 app.post('/register',async (req,res)=>{
