@@ -115,7 +115,10 @@ export default function Profile(){
       const addService = () => {
         setServices([...services, { name: "", pricePerDay: 0 }]);
       };
-    
+      const removeService = (index) => {
+        const updatedServices = services.filter((_, i) => i !== index);
+        setServices(updatedServices);
+      };
       const updateService = (index, fieldName, value) => {
         const updatedServices = [...services];
         updatedServices[index][fieldName] = value;
@@ -269,6 +272,13 @@ export default function Profile(){
                 updateService(index, "pricePerDay", parseFloat(ev.target.value))
               }
             />
+            <button
+        type="button"
+        className="primary my-1 mx-1 px-2 py-1 w-16"
+        onClick={() => removeService(index)}
+      >
+        Remove
+      </button>
             </div>
           </div>
         ))}

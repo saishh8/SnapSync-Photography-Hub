@@ -126,29 +126,33 @@ app.post('/uregister', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const userDoc = await Photographer.findOne({ email });
+  
+  if (!userDoc) {
+    return res.status(404).json('User not found');
+  }
+  
   console.log('userDoc:', userDoc);
-console.log('isVerified:', userDoc.isVerified);
-  if (userDoc) {
-    const passOk = bcrypt.compareSync(password, userDoc.password);
-    if (passOk) {
-      if (userDoc.isVerified) {
-        const token = jwt.sign({
-          email: userDoc.email,
-          id: userDoc._id
-        }, jwtSecret);
-        res.status(200).send({
-          msg: "Login Successful...!",
-          email: userDoc.email,
-          token
-        });
-      } else {
-        res.status(403).json('User is not verified. Please verify your account to log in.');
-      }
+  console.log('isVerified:', userDoc.isVerified);
+
+  const passOk = bcrypt.compareSync(password, userDoc.password);
+  if (passOk) {
+    if (userDoc.isVerified) {
+      const token = jwt.sign(
+        { email: userDoc.email, id: userDoc._id },
+        jwtSecret
+      );
+      return res.status(200).send({
+        msg: "Login Successful...!",
+        email: userDoc.email,
+        token,
+      });
     } else {
-      res.status(422).json('Password is incorrect');
+      return res
+        .status(403)
+        .json('User is not verified. Please verify your account to log in.');
     }
   } else {
-    res.status(404).json('User not found');
+    return res.status(422).json('Password is incorrect');
   }
 });
 
