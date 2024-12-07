@@ -9,9 +9,23 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const fs = require('fs');
-const stripe =require('stripe')("sk_test_51O2C7vSFVwLZwqIqjaMnygaWOBS5WLvW4cBMNDvx8Q6hGjWfirZc3FDYrLm0HmQDfq1dgl6xl3kA8UOJR78V7PnL00N0pwoVED")
+const bodyParser = require('body-parser');
+const { start } = require('repl');
+const stripe =require('stripe')("sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok")
+// sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok // new key
+// sk_test_51O2C7vSFVwLZwqIqjaMnygaWOBS5WLvW4cBMNDvx8Q6hGjWfirZc3FDYrLm0HmQDfq1dgl6xl3kA8UOJR78V7PnL00N0pwoVED // old key
+
+const endpointSecret = 'whsec_dfe2e47164d24f149aa456900312c6e04888f75c79403c9a35e7af78941b553a'
+
 const app = express();
-app.use(express.json());
+
+
+
+
+
+
+
+
 app.use('/uploads', express.static('uploads'));
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
@@ -29,6 +43,74 @@ app.use(cors({
     origin: 'http://localhost:3000',
   }));
 
+//   app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+//     const sig = req.headers['stripe-signature'];
+//     const body = req.body
+
+//     console.log(body);
+//     console.log('Raw body length:', body.length);
+//     console.log('Raw body as string:', body.toString());
+//     console.log('Content-Type:', req.headers['content-type']);
+//     console.log('Stripe Signature:', sig);
+
+
+
+    
+//     let event;
+
+//     try {
+//         event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+//     } catch (err) {
+//         console.error('Webhook signature verification failed:', err.message);
+//         return res.status(400).send(`Webhook Error: ${err.message}`);
+//     }
+
+//     // Handle the event
+//     switch (event.type) {
+//         case 'checkout.session.completed':
+//             const session = event.data.object;
+//             const { ownerId, userId, startDate, startTime, endTime, duration, serviceName } = session.metadata;
+
+//             // Ensure that all required fields are present
+//             if (!ownerId || !userId || !startDate || !startTime || !endTime || !duration || !serviceName) {
+//                 console.error('Missing required metadata fields');
+//                 return res.status(400).send('Missing required metadata fields');
+//             }
+
+//             // Update the booking to "booked"
+//             Bookings.findOneAndUpdate(
+//                 { 
+//                     photographerId: ownerId, 
+//                     userId: userId, 
+//                     startDate, 
+//                     startTime, 
+//                     endTime, 
+//                     duration, 
+//                     serviceName 
+//                 },
+//                 { status: 'booked' },
+//                 { new: true }
+//             )
+//                 .then((updatedBooking) => {
+//                     console.log('Booking updated to booked:', updatedBooking);
+//                 })
+//                 .catch((err) => {
+//                     console.error('Error updating booking:', err);
+//                 });
+//             break;
+
+//         case 'payment_intent.succeeded':
+//             // Handle payment_intent.succeeded if you're not using Checkout
+//             break;
+
+//         default:
+//             console.log(`Unhandled event type ${event.type}`);
+//     }
+
+//     res.status(200).json({ received: true });
+// });
+app.use('/webhook', express.raw({ type: 'application/json' }));
+app.use(express.json());
 app.get('/test',(req,res)=>{
     res.json('test OK');
 });
@@ -156,7 +238,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
+ 
 
 app.get('/user/:email',async(req,res)=>{
     const email = req.params.email;
@@ -210,22 +292,24 @@ app.get('/client/:email',async(req,res)=>{
   }
 });
 
-app.post('/create-payment-intent', async (req, res) => {
-  try {
-    // Calculate the payment amount based on the final price (use the 'price' variable)
-    const price = parseFloat(req.body.price); // Ensure 'price' is passed in the request
+//custom payment approach
 
-    // Generate a Payment Intent with the calculated 'price'
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: price * 100, // Stripe expects the amount in cents
-      currency: 'usd',
-    });
+// app.post('/create-payment-intent', async (req, res) => {
+//   try {
+//     // Calculate the payment amount based on the final price (use the 'price' variable)
+//     const price = parseFloat(req.body.price); // Ensure 'price' is passed in the request
 
-    res.json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+//     // Generate a Payment Intent with the calculated 'price'
+//     const paymentIntent = await stripe.paymentIntents.create({
+//       amount: price * 100, // Stripe expects the amount in cents
+//       currency: 'usd',
+//     });
+
+//     res.json({ clientSecret: paymentIntent.client_secret });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 
 //////
@@ -354,80 +438,172 @@ app.put('/updateProfile', async (req, res) => {
   }
 });
 
-  // app.post("/api/create-checkout-session", async (req, res) => {
-  //   const { product, selectedService } = req.body;
-  //   const session = await stripe.checkout.sessions.create({
-  //     payment_method_types: ["card"],
-  //     line_items: lineItems,
-  //     mode: "payment",
-  //     success_url: "http://localhost:3000/success", // Adjust the URLs as needed
-  //     cancel_url: "http://localhost:3000/cancel", // Adjust the URLs as needed
-  //   });
+ 
+
   
-  //   res.json({ id: session.id });
-  // });
+
+  //Older apporach for stripe checkout
+
   // app.post("/api/create-checkout-session", async (req, res) => {
   //   const { products } = req.body;
+  //   // const{ servicename, price, ownerId, userid, startDate, endDate } = products; //old version
+  //   const{ servicename, price, ownerId, userid, startDate, startTime,endTime, duration} = products;
+  //   //console.log(ownerId);
+  //   //console.log(userid);
+  // // console.log(products);
+  // // console.log("service name:",products.servicename);
+  // // console.log('serviceprice',products.price);
   
-  //   const lineItems = products.map((product) => ({
+  //   // Continue with creating the session and responding with the session ID.
+  //   const lineItem = {
   //     price_data: {
   //       currency: 'inr',
   //       product_data: {
-  //         name: product.selectedService.name,
+  //         name: products.servicename,
   //       },
-  //       unit_amount: product.price * 100,
+  //       unit_amount: products.price * 100,
   //     },
   //     quantity: 1,
-  //   }));
-  
+  //   };
+    
+  //   //Old apporach
+
+  //   // const session = await stripe.checkout.sessions.create({
+  //   //   payment_method_types: ["card"],
+  //   //   line_items: [lineItem],
+  //   //   mode: "payment",
+  //   //   success_url: `http://localhost:3000/success?ownerId=${ownerId}&userId=${userid}&startDate=${startDate}&endDate=${endDate}&serviceName=${servicename}&price=${price}`,
+  //   //   //success_url: `http://localhost:3000/success?product=${products}`,
+  //   //   cancel_url: "http://localhost:3000/cancel",
+  //   // });
+
+  //   // New approach
   //   const session = await stripe.checkout.sessions.create({
   //     payment_method_types: ["card"],
-  //     line_items: lineItems,
+  //     line_items: [lineItem],
   //     mode: "payment",
-  //     success_url: "http://localhost:3000/success",
+  //     success_url: `http://localhost:3000/success?ownerId=${ownerId}&userId=${userid}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${servicename}&price=${price}`,
+  //     //success_url: `http://localhost:3000/success?product=${products}`,
   //     cancel_url: "http://localhost:3000/cancel",
   //   });
   
   //   res.json({ id: session.id });
   // });
-  
 
   app.post("/api/create-checkout-session", async (req, res) => {
-    const { products } = req.body;
-    const{ servicename, price, ownerId, userid, startDate, endDate } = products;
-    //console.log(ownerId);
-    //console.log(userid);
-  // console.log(products);
-  // console.log("service name:",products.servicename);
-  // console.log('serviceprice',products.price);
-  
-    // Continue with creating the session and responding with the session ID.
-    const lineItem = {
-      price_data: {
-        currency: 'inr',
-        product_data: {
-          name: products.servicename,
-        },
-        unit_amount: products.price * 100,
-      },
-      quantity: 1,
-    };
-  
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [lineItem],
-      mode: "payment",
-      success_url: `http://localhost:3000/success?ownerId=${ownerId}&userId=${userid}&startDate=${startDate}&endDate=${endDate}&serviceName=${servicename}&price=${price}`,
-      //success_url: `http://localhost:3000/success?product=${products}`,
-      cancel_url: "http://localhost:3000/cancel",
-    });
-  
-    res.json({ id: session.id });
+    const { serviceName, price, ownerId, userId, startDate, startTime, endTime, duration } = req.body;
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'inr',
+                        product_data: { name: serviceName },
+                        unit_amount: price * 100,
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: "payment",
+            metadata: {
+                serviceName,
+                price,
+                ownerId,
+                userId,
+                startDate,
+                startTime,
+                endTime,
+                duration,
+            },
+            success_url: `http://localhost:3000/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
+            cancel_url: `http://localhost:3000/cancel`,
+        });
+
+        // Include both session ID and URL in the response
+        res.json({ id: session.id, url: session.url });
+    } catch (error) {
+        console.error("Error creating checkout session:", error);
+        res.status(500).json({ error: "Unable to create checkout session" });
+    }
   });
+  
+
+  app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const body = req.body
+
+    console.log(body);
+    console.log('Raw body length:', body.length);
+    console.log('Raw body as string:', body.toString());
+    console.log('Content-Type:', req.headers['content-type']);
+    console.log('Stripe Signature:', sig);
+
+
+
+    
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+    } catch (err) {
+        console.error('Webhook signature verification failed:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const session = event.data.object;
+            const { ownerId, userId, startDate, startTime, endTime, duration, serviceName } = session.metadata;
+
+            // Ensure that all required fields are present
+            if (!ownerId || !userId || !startDate || !startTime || !endTime || !duration || !serviceName) {
+                console.error('Missing required metadata fields');
+                return res.status(400).send('Missing required metadata fields');
+            }
+
+            // Update the booking to "booked"
+            Bookings.findOneAndUpdate(
+                { 
+                    photographerId: ownerId, 
+                    userId: userId, 
+                    startDate:startDate, 
+                    startTime:startTime, 
+                    endTime:endTime, 
+                    duration:duration, 
+                    serviceName:serviceName 
+                },
+                { status: 'booked' },
+                { new: true }
+            )
+                .then((updatedBooking) => {
+                    console.log('Booking updated to booked:', updatedBooking);
+                })
+                .catch((err) => {
+                    console.error('Error updating booking:', err);
+                });
+            break;
+
+        case 'payment_intent.succeeded':
+            // Handle payment_intent.succeeded if you're not using Checkout
+            break;
+
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+
+    res.status(200).json({ received: true });
+});
+
+
+  //Create Client booking for the first time
   
   app.post('/create-booking', async (req, res) => {
     try {
-      const { userId, photographerId, serviceName, totalPrice, startDate, endDate } = req.body;
+      // const { userId, photographerId, serviceName, totalPrice, startDate, endDate } = req.body; // old approach
+      const { userId, photographerId, serviceName, totalPrice, startDate, startTime, endTime, duration } = req.body;
       //const startDateTime = new Date(startDate);
       //const endDateTime = new Date(endDate);
       // Check if a booking with the same properties already exists
@@ -437,7 +613,9 @@ app.put('/updateProfile', async (req, res) => {
         serviceName,
         totalPrice,
         startDate,
-        endDate,
+        startTime,
+        endTime,
+        duration
       });
   
       if (existingBooking) {
@@ -451,11 +629,15 @@ app.put('/updateProfile', async (req, res) => {
         serviceName,
         totalPrice,
         startDate,
-        endDate,
+        startTime,
+        endTime,
+        duration
       });
   
       res.status(201).json({ booking });
     } catch (error) {
+      console.log(error);
+      
       res.status(500).json({ error: 'Error creating the booking' });
     }
   });
@@ -492,6 +674,111 @@ app.get('/photographers', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+//fetch photographer's bookings
+app.get('/api/photographer/:photographerId/bookings', async (req,res)=>{
+
+    const {photographerId} = req.params;
+
+    try {
+      
+      const bookings = await Bookings.find({photographerId:photographerId});
+      res.status(200).json(bookings);
+      
+    } catch (error) {
+
+      console.log('Error fetching photgrapher\'s bookings');
+      res.status(500).json({error:'Error fetching bookings'});
+      
+    }
+});
+
+
+//accept or reject photography commission request
+app.patch('/api/photographer/bookings/:id/respond', async(req,res)=>{
+
+    const {id} = req.params; //booking id
+    const {action} = req.body; //either pass accepted or rejected
+    const {photographerId}= req.body; // ensure the photohrapherId is passed in the body
+
+    try {
+
+      const currentBooking = await Bookings.findOne({_id:id,photographerId:photographerId});
+
+      if (!currentBooking){
+
+        return res.status(404).json({error:'Booking not found'});
+       
+      }
+
+
+      if(action == 'accepted'){
+
+        currentBooking.status = 'payment pending';
+
+      }
+      else if (action == 'rejected'){
+
+        currentBooking.status = 'rejected';
+
+      }
+      else{
+
+        return res.status(400).json({error:'Invalid action'});
+      }
+
+
+      const success = await currentBooking.save();
+
+      if(success){
+
+        res.status(200).json({message:`Booking ${action} successfully`})
+      }
+      else{
+
+        res.status(500).json({error:'Error occured saving booking'});
+      }
+
+      
+    } catch (error) {
+
+      console.log('Error updating booking status');
+      res.status(500).json({error:'Error updating booking status'});
+    }
+
+
+});
+
+
+//update commission booking status to booked
+
+app.patch('/api/bookings/:id/payment', async(req,res)=>{
+      
+    const {id} = req.params;
+
+    try{
+      const currentBooking = await Bookings.findById(id);
+
+      if(!currentBooking || currentBooking.status !== 'payment pending') {
+        return res.status(400).json({ error: 'Invalid booking for payment' });
+      }
+
+      currentBooking.status = 'booked';
+      await currentBooking.save();
+
+      res.status(200).json({ message: 'Payment successful, booking confirmed', booking });
+    }catch (error) {
+      console.log(error);
+      
+      res.status(500).json({ error: 'Failed to update payment status' });
+    }
+});
+
+
+
+
 app.put('/api/photographers/:photographerId/verify', async (req, res) => {
   const photographerId = req.params.photographerId;
   const isVerified = req.body.isVerified;
@@ -513,5 +800,5 @@ app.put('/api/photographers/:photographerId/verify', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-  app.listen(4000);
+  app.listen(4000,()=>`Server is running on port 4000`);
   
