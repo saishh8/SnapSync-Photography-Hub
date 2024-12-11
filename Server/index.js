@@ -10,12 +10,15 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { start } = require('repl');
-const stripe =require('stripe')("sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok")
-// sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok // new key
-// sk_test_51O2C7vSFVwLZwqIqjaMnygaWOBS5WLvW4cBMNDvx8Q6hGjWfirZc3FDYrLm0HmQDfq1dgl6xl3kA8UOJR78V7PnL00N0pwoVED // old key
 
-const endpointSecret = 'whsec_dfe2e47164d24f149aa456900312c6e04888f75c79403c9a35e7af78941b553a'
+require('dotenv').config();
+
+
+
+
+
+const stripe =require('stripe')(process.env.STRIPE);
+const endpointSecret = process.env.ENDPOINT_SECRET;
 
 const app = express();
 
@@ -28,87 +31,18 @@ const app = express();
 
 app.use('/uploads', express.static('uploads'));
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
+const jwtSecret = process.env.JWT_SECRET;
 
-// mongoose.connect('mongodb+srv://dhruvsanghavi000:Y4Gx0re0bQXtBRYJ@cluster0.vnncwzl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp')
-//dhruvsanghavi000 
-//Y4Gx0re0bQXtBRYJ
 
-mongoose.connect('mongodb+srv://saish:kTtDJDDxGUIZnqtK@snapsync.lqlcj.mongodb.net/?retryWrites=true&w=majority&appName=SnapSync')
+mongoose.connect(process.env.DB_URI)
 
-//saish
-//kTtDJDDxGUIZnqtK
+
 
 app.use(cors({
     origin: 'http://localhost:3000',
   }));
 
-//   app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-//     const sig = req.headers['stripe-signature'];
-//     const body = req.body
 
-//     console.log(body);
-//     console.log('Raw body length:', body.length);
-//     console.log('Raw body as string:', body.toString());
-//     console.log('Content-Type:', req.headers['content-type']);
-//     console.log('Stripe Signature:', sig);
-
-
-
-    
-//     let event;
-
-//     try {
-//         event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
-//     } catch (err) {
-//         console.error('Webhook signature verification failed:', err.message);
-//         return res.status(400).send(`Webhook Error: ${err.message}`);
-//     }
-
-//     // Handle the event
-//     switch (event.type) {
-//         case 'checkout.session.completed':
-//             const session = event.data.object;
-//             const { ownerId, userId, startDate, startTime, endTime, duration, serviceName } = session.metadata;
-
-//             // Ensure that all required fields are present
-//             if (!ownerId || !userId || !startDate || !startTime || !endTime || !duration || !serviceName) {
-//                 console.error('Missing required metadata fields');
-//                 return res.status(400).send('Missing required metadata fields');
-//             }
-
-//             // Update the booking to "booked"
-//             Bookings.findOneAndUpdate(
-//                 { 
-//                     photographerId: ownerId, 
-//                     userId: userId, 
-//                     startDate, 
-//                     startTime, 
-//                     endTime, 
-//                     duration, 
-//                     serviceName 
-//                 },
-//                 { status: 'booked' },
-//                 { new: true }
-//             )
-//                 .then((updatedBooking) => {
-//                     console.log('Booking updated to booked:', updatedBooking);
-//                 })
-//                 .catch((err) => {
-//                     console.error('Error updating booking:', err);
-//                 });
-//             break;
-
-//         case 'payment_intent.succeeded':
-//             // Handle payment_intent.succeeded if you're not using Checkout
-//             break;
-
-//         default:
-//             console.log(`Unhandled event type ${event.type}`);
-//     }
-
-//     res.status(200).json({ received: true });
-// });
 app.use('/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.get('/test',(req,res)=>{
@@ -179,31 +113,6 @@ app.post('/uregister', async (req, res) => {
 
 })
 
-// app.post('/login',async(req,res)=>{
-//     const {email,password} = req.body;
-//     const userDoc = await Photographer.findOne({email});
-//     if (userDoc) {
-        
-//         const passOk = bcrypt.compareSync(password, userDoc.password);
-//         if (passOk){
-//             const token = jwt.sign({
-//                 email:userDoc.email,
-//                 id:userDoc._id
-//             },jwtSecret);
-//             res.status(200).send({
-//                 msg: "Login Successful...!",
-//                 email: userDoc.email,
-//                 token
-//             });          
-//         }else {
-//             res.status(422).json('pass not ok');
-//           }
-//     }
-//     else{
-//         res.json('not found');
-//     }
-
-// })
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
