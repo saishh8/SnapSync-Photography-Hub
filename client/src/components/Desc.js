@@ -88,8 +88,9 @@ function Desc() {
     if (!selectedService.price || !startDate || !endDate) {
       return;
     }
-
-    const stripe = await loadStripe("pk_test_51O2C7vSFVwLZwqIq2Oa6NgFam2ExFHV3E2ddASYhHDXF41Bl6zHj8WPZNadlfvZXE7QDsTZXq82dw8gdHIKn7Fj400exUj9oJS");
+    // sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok //new key
+    // pk_test_51O2C7vSFVwLZwqIq2Oa6NgFam2ExFHV3E2ddASYhHDXF41Bl6zHj8WPZNadlfvZXE7QDsTZXq82dw8gdHIKn7Fj400exUj9oJS // old key
+    const stripe = await loadStripe("sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok"); 
     const servicename = selectedService.name;
     const serviceprice = selectedService.price;
     const ownerId = profile.owner;
