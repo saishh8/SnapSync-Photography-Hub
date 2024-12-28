@@ -513,5 +513,7 @@ app.put('/api/photographers/:photographerId/verify', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-  app.listen(4000);
+app.listen(4000, () => {
+  console.log("Port is running on 4000");
+});
   
