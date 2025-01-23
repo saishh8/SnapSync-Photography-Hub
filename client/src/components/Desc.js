@@ -14,7 +14,9 @@ function Desc() {
   const [profile, setProfile] = useState({});
   const [selectedService, setSelectedService] = useState({ price: null, name: null });
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [duration, setDuration] = useState('');
   const [price, setPrice] = useState(null);
   // const [daterror, setDaterror] = useState(false); // Track date errors
   const [showAllPhotos, setShowAllPhotos] = useState(false);
@@ -31,14 +33,44 @@ function Desc() {
         console.error('Error fetching profile description:', error);
       });
   }, [id]);
-
+  const durationOptions = [
+    { value: 0.5, label: '30 minutes' },
+    { value: 1, label: '1 hour' },
+    { value: 1.5, label: '1.5 hours' },
+    { value: 2, label: '2 hours' },
+    { value: 2.5, label: '2.5 hours' },
+    { value: 3, label: '3 hours' },
+    { value: 3.5, label: '3.5 hours' },
+    { value: 4, label: '4 hours' },
+    { value: 4.5, label: '4.5 hours' },
+    { value: 5, label: '5 hours' },
+    { value: 5.5, label: '5.5 hours' },
+    { value: 6, label: '6 hours' },
+    { value: 6.5, label: '6.5 hours' },
+    { value: 7, label: '7 hours' },
+    { value: 7.5, label: '7.5 hours' },
+    { value: 8, label: '8 hours' }
+  ];
   useEffect(() => {
-    if (startDate && endDate && selectedService.price) {
-      calculatePrice(startDate, endDate, selectedService.price);
-    } else {
-      setPrice(null); // Hide price when dates are invalid or not selected
+    if (startTime && duration) {
+      const [hours, minutes] = startTime.split(':').map(Number);
+      const durationHours = parseFloat(duration);
+      
+      let totalMinutes = hours * 60 + minutes + durationHours * 60;
+      const newHours = Math.floor(totalMinutes / 60);
+      const newMinutes = Math.floor(totalMinutes % 60);
+      
+      const formattedEndTime = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+      setEndTime(formattedEndTime);
     }
-  }, [startDate, endDate, selectedService]);
+  }, [startTime, duration]);
+  useEffect(() => {
+    if (startDate && startTime && endTime && selectedService.price) {
+      calculatePrice(startDate, startTime, endTime, selectedService.price);
+    } else {
+      setPrice(null);
+    }
+  }, [startDate, startTime, endTime, selectedService]);
 
   const handleServiceChange = (service, index) => {
     setSelectedService({
@@ -47,15 +79,47 @@ function Desc() {
     });
     setSelectedServiceIndex(index); // Track the index of the selected service
   };
+  const createBooking = async () => {
+    if (!selectedService.price || !startDate || !startTime || !duration) {
+      alert('Please fill out all the required fields.');
+      return;
+    }
+  
+    const body = {
+      userId: userid,
+      photographerId: profile.owner,
+      serviceName: selectedService.name,
+      totalPrice: price,
+      startDate,
+      startTime,
+      endTime,
+      duration: parseFloat(duration)
+    };
+  
+    try {
+      const response = await axios.post('http://localhost:4000/create-booking', body);
+      if (response.status === 201) {
+        alert('Booking created successfully!');
+      } else {
+        alert('Failed to create booking.');
+      }
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      alert('An error occurred while creating the booking.');
+    }
+  };
+  
+  const calculatePrice = (date, startTime, endTime, servicePrice) => {
+    if (!startTime || !endTime || !servicePrice) {
+      setPrice(null);
+      return;
+    }
+    
 
-  const calculatePrice = (start, end, servicePrice) => {
-    const startDateTime = new Date(start).getTime();
-    const endDateTime = new Date(end).getTime();
-    const timeDifference = endDateTime - startDateTime;
-    const daysDifference = Math.floor(timeDifference / (1000 * 3600 * 24)) + 1;
-    const totalPrice = servicePrice * daysDifference;
+    const totalPrice = Math.round(servicePrice * parseFloat(duration));
     setPrice(totalPrice);
   };
+  
 
   const today = new Date();
   const tomorrow = new Date(today);
@@ -65,27 +129,11 @@ function Desc() {
   const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
 
   // Ensure that end date is greater than or equal to the start date
-  const handleStartDateChange = (e) => {
-    const newStartDate = e.target.value;
-    setStartDate(newStartDate);
+  
 
-    // If the end date is before the new start date, reset the end date
-    if (endDate && newStartDate > endDate) {
-      setEndDate(newStartDate);
-    }
-  };
-
-  const handleEndDateChange = (e) => {
-    const newEndDate = e.target.value;
-    if (newEndDate >= startDate) {
-      setEndDate(newEndDate);
-    } else {
-      alert('End date cannot be before the start date.');
-    }
-  };
-
+ 
   const makePayment = async () => {
-    if (!selectedService.price || !startDate || !endDate) {
+    if (!selectedService.price || !startDate || !startTime || !endTime) {
       return;
     }
     // sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok //new key
@@ -96,7 +144,17 @@ function Desc() {
     const ownerId = profile.owner;
 
     const body = {
-      products: { id, servicename, serviceprice, price, ownerId, userid, startDate, endDate },
+      products: {
+        id,
+        servicename: selectedService.name,
+        serviceprice: selectedService.price,
+        price,
+        ownerId: profile.owner,
+        userid,
+        startDate,
+        startTime,
+        endTime
+      },
     };
     const headers = {
       "Content-Type": "application/json",
@@ -233,7 +291,7 @@ function Desc() {
                     </div>
                     <div className="text-2xl font-bold">
                       ₹{service.pricePerDay}
-                      <span className="text-sm text-gray-500 ml-1">/day</span>
+                      <span className="text-sm text-gray-500 ml-1">/hour</span>
                     </div>
                     <ul className="text-sm text-gray-600 mt-3 space-y-1">
                       <li>• HD photos & videos</li>
@@ -272,37 +330,46 @@ function Desc() {
               
               </div>
               <div className="border rounded-xl">
-              <div className="grid grid-cols-2 divide-x">
-                <div className="p-3">
-                  <label className="block text-xs text-gray-600 mb-1">START DATE</label>
-                    <input
-                      type="date"
-                      id="start-date"
-                      name="start-date"
-                      value={startDate}
-                      onChange={handleStartDateChange}
-                      min={tomorrowFormatted} // Start date must be at least tomorrow
-                      className="w-full text-sm"
-                    />
-                  </div>
-                  <div className="p-3">
-                  <label className="block text-xs text-gray-600 mb-1">END DATE</label>
-                    <input
-                      type="date"
-                      id="end-date"
-                      name="end-date"
-                      value={endDate}
-                      onChange={handleEndDateChange}
-                      min={startDate} // End date must be after or equal to start date
-                      className="w-full text-sm"
-                    />
-                  </div>
+        <div className="grid grid-cols-3 divide-x">
+          <div className="p-3">
+            <label className="block text-xs text-gray-600 mb-1">DATE</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              className="w-full text-sm"
+            />
+          </div><div className="p-3">
+            <label className="block text-xs text-gray-600 mb-1">START TIME</label>
+            <input
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="w-full text-sm"
+            />
+          </div>
+          <div className="p-3">
+            <label className="block text-xs text-gray-600 mb-1">DURATION</label>
+            <select
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              className="w-full text-sm border rounded p-1"
+            >
+              <option value="">Select duration</option>
+              {durationOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
                 </div>
               </div>
               <button
-                onClick={makePayment}
-                className="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 rounded-xl mt-4 hover:opacity-90 transition disabled:opacity-50"
-                disabled={!price} // daterror
+                onClick={createBooking}
+                // className="bg-gradient-to-r from-rose-500 to-pink-500 text-white py-3 r hover:opacity-90 transition disabled:opacity-50"
+                className="w-full  bg-gray-900 text-white px-4 py-3 ounded-xl mt-4 rounded-lg hover:bg-gray-800 transition-colors duration-200"
               >
                 Book this Photographer
               </button>
