@@ -10,15 +10,15 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const ProfileModel = require('./models/Profile.js');
 
 require('dotenv').config();
 
 
 
 
-
-const stripe =require('stripe')(process.env.STRIPE);
-const endpointSecret = process.env.ENDPOINT_SECRET;
+const stripe =require('stripe')("sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok")
+const endpointSecret = "whsec_dfe2e47164d24f149aa456900312c6e04888f75c79403c9a35e7af78941b553a"
 
 const app = express();
 
@@ -31,10 +31,10 @@ const app = express();
 
 app.use('/uploads', express.static('uploads'));
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
 
-mongoose.connect(process.env.DB_URI)
+mongoose.connect('mongodb+srv://dhruvsanghavi000:Y4Gx0re0bQXtBRYJ@cluster0.vnncwzl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp')
 
 
 
@@ -550,20 +550,31 @@ app.put('/updateProfile', async (req, res) => {
       res.status(500).json({ error: 'Error creating the booking' });
     }
   });
-  
 
-
-
+// Backend route
 app.get('/bookings/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   try {
-      const bookings = await Bookings.find({ userId: userId });
 
-      res.status(200).json(bookings);
+    const bookings = await Bookings.find({ userId: userId });
+    const photographerIds = bookings.map(booking => booking.photographerId);
+    const photographerProfiles = await ProfileModel.find({
+      owner: { $in: photographerIds }
+    });
+    const profileMap = photographerProfiles.reduce((acc, profile) => {
+      acc[profile.owner.toString()] = profile;
+      return acc;
+    }, {});
+    const bookingsWithProfile = bookings.map(booking => ({
+      ...booking.toObject(),
+      photographerProfile: profileMap[booking.photographerId.toString()] || null
+    }));
+
+    res.status(200).json(bookingsWithProfile);
   } catch (error) {
-      console.error('Error fetching bookings:', error);
-      res.status(500).json({ error: 'Error fetching bookings' });
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({ error: 'Error fetching bookings' });
   }
 });
   
@@ -593,7 +604,9 @@ app.get('/api/photographer/:photographerId/bookings', async (req,res)=>{
 
     try {
       
-      const bookings = await Bookings.find({photographerId:photographerId});
+      const bookings = await Bookings.find({ photographerId }).populate('userId', 'fname lname');
+      console.log(bookings);
+
       res.status(200).json(bookings);
       
     } catch (error) {
