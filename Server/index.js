@@ -17,8 +17,9 @@ require('dotenv').config();
 
 
 
-const stripe =require('stripe')("sk_test_51QT7hwGpE8twtI882ddG9nzDcVHHf8cVvvjWKiDW53ISmR5pxpMFqOYwu2wMZTMq6RS4ts9cQ8KKrdeguBT8KdUO00k2I475ok")
-const endpointSecret = "whsec_dfe2e47164d24f149aa456900312c6e04888f75c79403c9a35e7af78941b553a"
+
+const stripe =require('stripe')(process.env.STRIPE);
+const endpointSecret = process.env.ENDPOINT_SECRET;
 
 const app = express();
 
@@ -31,11 +32,10 @@ const app = express();
 
 app.use('/uploads', express.static('uploads'));
 const bcryptSalt = bcrypt.genSaltSync(10);
-const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
+const jwtSecret = process.env.JWT_SECRET;
 
 
-mongoose.connect('mongodb+srv://dhruvsanghavi000:Y4Gx0re0bQXtBRYJ@cluster0.vnncwzl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp')
-
+mongoose.connect(process.env.DB_URI)
 
 
 app.use(cors({
