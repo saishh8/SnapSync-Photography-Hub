@@ -343,7 +343,7 @@ const Profile = () => {
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">₹</span>
                       <input 
                         type="number"
-                        placeholder="Per Day Price"
+                        placeholder="Price per Hour"
                         value={service.pricePerDay}
                         onChange={(e) => {
                           const updatedServices = [...formData.services];
