@@ -21,6 +21,7 @@ import UserProfile from './components/UserProfile';
 import Mybookings from './components/Mybookings';
 import Admin from './components/Admin';
 import Admin_Login from './components/Admin_Login';
+import Request from './components/Request.js';
 
 axios.defaults.baseURL='http://localhost:4000';
 
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: '/PHome',
     element: <PhotoHome/>
+  },
+  {
+    path: '/req',
+    element: <Request/>
   },
   {
     path: '/PHome/profile',
