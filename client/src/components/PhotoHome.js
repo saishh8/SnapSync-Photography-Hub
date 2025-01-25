@@ -4,6 +4,7 @@ import { getUsername } from "../helper/helper";
 import NavbarP from "./NavbarP";
 import { Camera, Image, Calendar, Mail, Award } from "lucide-react";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 export default function PhotoHome() {
   const [photographerData, setPhotographerData] = useState({});
@@ -98,9 +99,9 @@ export default function PhotoHome() {
                 <p className="text-gray-600">Professional Photographer</p>
               </div>
               <div className="mt-4 md:mt-0">
-                <button className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">
+                <Link to='/PHome/profile' className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">
                   Edit Profile
-                </button>
+                </Link>
               </div>
             </div>
             

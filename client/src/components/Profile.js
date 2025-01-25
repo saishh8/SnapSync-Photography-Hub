@@ -24,7 +24,7 @@ const Profile = () => {
     city: '',
     addedPhotos: [],
     language: [],
-    services: [{ name: "", pricePerDay: 100 }]
+    services: [{ name: "", pricePerDay: '' }]
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -144,7 +144,8 @@ const Profile = () => {
                      
                     }}
                     placeholder="Professional Photography Brand"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
+                    style={{ paddingLeft: '2.5rem', paddingRight: '1rem' }}
+                    className="w-full py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
                   />
                 </div>
               </div>
@@ -158,8 +159,9 @@ const Profile = () => {
                     updateFormData('description', e.target.value);
                     
                   }}
+                  style={{ paddingLeft: '2.5rem', paddingRight: '1rem' }}
                   placeholder="Craft a compelling narrative about your photography journey and expertise"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300 min-h-[120px]"
+                  className="w-full py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300 min-h-[120px]"
                 />
               </div>
             </div>
@@ -189,11 +191,10 @@ const Profile = () => {
                     value={formData.city}
                     onChange={(e) => {
                       updateFormData('city', e.target.value);
-                     
-
                     }}
+                    style={{ paddingLeft: '2.5rem', paddingRight: '1rem' }}
                     placeholder="Primary City of Operation"
-                    className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
+                    className="w-full py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
                   />
                 </div>
               </div>
@@ -334,21 +335,23 @@ const Profile = () => {
                           
                           
                         }}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
+                        style={{ paddingLeft: '2.5rem', paddingRight: '1rem' }}
+                        className="w-full py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
                       />
                     </div>
                     <div className="relative w-1/3">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">₹</span>
                       <input 
                         type="number"
-                        placeholder="Price"
+                        placeholder="Per Day Price"
                         value={service.pricePerDay}
                         onChange={(e) => {
                           const updatedServices = [...formData.services];
                           updatedServices[index].pricePerDay = parseFloat(e.target.value);
                           updateFormData('services', updatedServices);
                         }}
-                        className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
+                        style={{ paddingLeft: '1.5rem', paddingRight: '1rem' }}
+                        className="w-full py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent transition duration-300"
                       />
                     </div>
                     <button 
@@ -364,7 +367,7 @@ const Profile = () => {
                 ))}
                 <button 
                   onClick={() => {
-                    updateFormData('services', [...formData.services, { name: "", pricePerDay: 100 }]);
+                    updateFormData('services', [...formData.services, { name: "", pricePerDay: '' }]);
                   }}
                   className="w-full py-2 border-2 border-gray-500 text-gray-500 rounded-lg hover:bg-gray-50 transition duration-300 flex items-center justify-center"
                 >
