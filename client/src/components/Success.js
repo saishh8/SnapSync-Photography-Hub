@@ -12,7 +12,7 @@ function Success() {
   const ownerId = params.get('ownerId');
   const userId = params.get('userId');
   const startDate = params.get('startDate');
-  const endDate = params.get('endDate');
+  const startTime = params.get('startTime')
 
   useEffect(() => {
     // Make an API call to create the booking using Axios
@@ -22,7 +22,7 @@ function Success() {
         serviceName,
         totalPrice: price,
         startDate,
-        endDate,
+        startTime,
       })
       .then((response) => {
         // Handle the response (you can redirect to a thank you page or show a confirmation message)
@@ -52,7 +52,8 @@ function Success() {
       <p className='text-center text-2xl font-semibold'>Service Name: {serviceName}</p>
       <p className='text-center text-2xl font-semibold'>Price: ₹{price}   </p>
       <p className='text-center text-2xl font-semibold'>Start Date:{startDate}</p>
-      <p className='text-center text-2xl font-semibold'>End Date:{endDate}</p>
+      <p className='text-center text-2xl font-semibold'>Start Time:{startTime}</p>
+      {/* <p className='text-center text-2xl font-semibold'>End Date:{endDate}</p> */}
       {/* Add more content here */}
      
 

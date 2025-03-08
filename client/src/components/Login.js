@@ -55,11 +55,11 @@ export default function Login(){
 
     <div className={styles.glass}>
 
-      <div className='title flex flex-col my-5 items-center'><Link className="underline text-black" to={'/'}>HOME</Link></div>
+      <div className='title flex flex-col my-3 items-center'><Link className=" text-black" to={'/'}>HOME</Link></div>
 
     <div className='title flex flex-col items-center'>
 
-    <h4 className='text-5xl py-2 font-bold'>Photographer</h4>
+    <h4 className='text-5xl font-bold'>Photographer</h4>
     <h4 className='text-5xl font-bold'>Login</h4>
     <span className='py-4 text-xl text-center w-2/3 text-gray-500'>Explore more by connecting with us</span>
 

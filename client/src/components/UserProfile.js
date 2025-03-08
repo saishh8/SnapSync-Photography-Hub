@@ -1,68 +1,141 @@
-import React from 'react'
-import { getUsername } from '../helper/helper';
-import axios from 'axios';
-import { useState,useEffect } from 'react';
-import Navbar3 from './Navbar3';
-
+import React, { useEffect, useState } from "react";
+import { getUsername } from "../helper/helper";
+import axios from "axios";
+import Navbar3 from "./Navbar3";
+import { Calendar, Mail, Clock, User } from "lucide-react";
+import moment from "moment";
+import { Link } from "react-router-dom";
 export default function UserProfile() {
+  const [clientData, setClientData] = useState({});
+  const [bookings, setBookings] = useState([]);
 
+  useEffect(() => {
+    const { email } = getUsername();
+    if (email) {
+      // Fetch client data
+      axios.get(`/client/${email}`)
+        .then(res => {
+          setClientData(res.data);
+          
+          // Fetch bookings for the client
+          return axios.get(`/bookings/${res.data._id}`);
+        })
+        .then(bookingsRes => {
+            // Filter only confirmed bookings (status: 'booked')
+            const confirmedBookings = bookingsRes.data.filter(
+              booking => booking.status === 'booked'
+            );
+            setBookings(confirmedBookings);
+          })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  }, []);
 
+  // Calculate booking statistics
+  const upcomingBookings = bookings.filter(booking => 
+    moment(booking.startDate).isAfter(moment())
+  );
 
-    const [clientData, setClientData] = useState({});
-  
+  const completedBookings = bookings.filter(booking => 
+    moment(booking.startDate).isBefore(moment())
+  );
 
-    useEffect( ()=>{
-        const {email} = getUsername();
-        console.log(email);
-        if (email){
-            axios.get(`/client/${email}`)
-            .then(res=>{
-                setClientData(res.data);
-            })
-            .catch(error => {
-                console.log(error)
-              });
-            } else {
-                console.log('email not found')
-            }
-            //return () => {};
-          }, []);
+  const nextSession = upcomingBookings.length > 0 
+    ? moment(upcomingBookings[0].startDate).format('MMM DD') 
+    : 'No upcoming sessions';
+
   return (
-    <div>
-
-
-
-<Navbar3/>
-        
-  
-    
-        <div className="flex flex-col justify-center items-center h-[100vh]">
-            <div className="relative flex flex-col items-center rounded-[20px] w-[400px] mx-auto p-4 bg-white bg-clip-border shadow-3xl shadow-shadow-500 dark:!bg-navy-800 dark:text-white dark:!shadow-none">
-                <div className="relative flex h-32 w-full justify-center rounded-xl bg-cover" >
-                    <img src='https://horizon-tailwind-react-git-tailwind-components-horizon-ui.vercel.app/static/media/banner.ef572d78f29b0fee0a09.png' className="absolute flex h-32 w-full justify-center rounded-xl bg-cover"/> 
-                    
-                </div> 
-                <div className="mt-16 flex flex-col items-center">
-                    <h4 className="text-xl font-bold text-navy-700 dark:text-black">
-                   { clientData.fname} { clientData.lname}
-                    </h4>
-                    <p className="text-base font-normal text-gray-600">SnapSync Client</p>
-                </div> 
-                <div className="mt-6 mb-3 flex gap-14 md:!gap-14">
-                    
-                    <div className="flex flex-col items-center justify-center">
-                    <p className="text-2xl font-bold text-navy-700 dark:text-black">
-                   e-mail
-                    </p>
-                    <p className="text-sm font-normal text-gray-600"> { clientData.email}</p>
-                    </div>
-                </div>
-            </div>  
-            
-        </div>
-  
-
+    <div className="min-h-screen bg-gray-50">
+      <Navbar3 />
       
+      <div className="bg-black text-white py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <h1 className="text-4xl font-bold mb-4">
+            Welcome, {clientData.fname} {clientData.lname}
+          </h1>
+          <p className="text-gray-400">View your photography sessions and manage bookings</p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 -mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gray-100 rounded-full">
+                <Calendar className="w-6 h-6 text-gray-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Next Session</p>
+                <p className="text-2xl font-bold">{nextSession}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gray-100 rounded-full">
+                <Clock className="w-6 h-6 text-gray-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Upcoming Sessions</p>
+                <p className="text-2xl font-bold">{upcomingBookings.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gray-100 rounded-full">
+                <Clock className="w-6 h-6 text-gray-700" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Sessions Completed</p>
+                <p className="text-2xl font-bold">{completedBookings.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 mt-12">
+        <div className="bg-white rounded-lg shadow-lg">
+          <div className="p-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Account Details</h2>
+                <p className="text-gray-600">Manage your profile and preferences</p>
+              </div>
+              <div className="mt-4 md:mt-0">
+                <Link to='/Cards'className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">
+                  Book Session
+                </Link>
+              </div>
+            </div>
+            
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center space-x-3">
+                <User className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-600">Name</p>
+                  <p className="font-medium">
+                    {clientData.fname} {clientData.lname}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Mail className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-600">Email</p>
+                  <p className="font-medium">{clientData.email}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }

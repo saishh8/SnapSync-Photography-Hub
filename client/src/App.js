@@ -11,6 +11,7 @@ import Card from './components/Card';
 import axios from 'axios';
 import Desc from './components/Desc';
 import Landing from './components/Landing';
+import Request from './components/Request.js'
 
 import USignIn from './components/USignIn.js'
 import URegister from './components/URegister.js'
@@ -20,9 +21,10 @@ import Can from './components/Can';
 import UserProfile from './components/UserProfile';
 import Mybookings from './components/Mybookings';
 import Admin from './components/Admin';
-import Admin_Login from './components/Admin_Login';
-
-axios.defaults.baseURL='http://localhost:4000';
+import AdminLogin from './components/AdminLogin';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+console.log("API BASE URL:", API_BASE_URL); // Debugging line
+axios.defaults.baseURL=`${API_BASE_URL}`;
 
 /** root routes */
 const router = createBrowserRouter([
@@ -52,6 +54,10 @@ const router = createBrowserRouter([
     element: <PhotoHome/>
   },
   {
+    path: '/req',
+    element: <Request/>
+  },
+  {
     path: '/PHome/profile',
     element: <Profile/>
   },
@@ -70,6 +76,9 @@ const router = createBrowserRouter([
     path:'/desc/:id',
     element:<Desc/>
   },{
+    path:'/req',
+    element:<Request/>
+  },{
     path:'/success',
     element:<Success/>
   },
@@ -79,7 +88,7 @@ const router = createBrowserRouter([
   },
   {
     path:'/admin',
-    element:<Admin_Login/>
+    element:<AdminLogin/>
   },{
   path:'home_admin',
   element:<Admin/>
