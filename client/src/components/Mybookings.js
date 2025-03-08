@@ -19,10 +19,12 @@ export default function Mybookings() {
   const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(false);
   const [paymentLoadingId, setPaymentLoadingId] = useState(null)
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  console.log(API_BASE_URL);
+  
   useEffect(() => {
     setLoading(true);
-    axios.get(`http://localhost:4000/bookings/${id}`)
+    axios.get(`${API_BASE_URL}/bookings/${id}`)
       .then((response) => {
         setBookings(response.data);
       })
@@ -37,7 +39,7 @@ export default function Mybookings() {
   const handlePayment = async (booking) => {
     try {
       setPaymentLoadingId(booking._id);
-      const response = await axios.post('http://localhost:4000/api/create-checkout-session', {
+      const response = await axios.post(`${API_BASE_URL}/api/create-checkout-session`, {
         serviceName: booking.serviceName,
         price: booking.totalPrice,
         ownerId: booking.photographerId,

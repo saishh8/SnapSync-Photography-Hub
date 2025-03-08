@@ -29,7 +29,6 @@ const app = express();
 
 
 
-
 app.use('/uploads', express.static('uploads'));
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;

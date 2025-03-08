@@ -11,10 +11,10 @@ function Card() {
   const [searchTerm, setSearchTerm] = useState('');
   const [cityFilter, setCityFilter] = useState('');
   const [uniqueCities, setUniqueCities] = useState([]);
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   // Fetch all cards
   useEffect(() => {
-    axios.get('http://localhost:4000/allcards')
+    axios.get(`${API_BASE_URL}/allcards`)
       .then((response) => {
         setProfileCards(response.data);
         setFilteredCards(response.data);
@@ -61,13 +61,15 @@ function Card() {
           {/* Search Input */}
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search by title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+           
+      <input 
+        type="text" 
+        placeholder="Search by title..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{ paddingLeft: '3rem', paddingRight: '1rem' }}
+        className="w-full py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
             
           </div>
 
@@ -103,7 +105,7 @@ function Card() {
               onClick={() => handleCardClick(profile._id)}
             >
               <img
-                src={`http://localhost:4000/${profile.photos[0]}`}
+                src={`${API_BASE_URL}/${profile.photos[0]}`}
                 alt="Profile"
                 className="w-full h-48 object-cover"
               />

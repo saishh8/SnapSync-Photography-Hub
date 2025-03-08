@@ -25,22 +25,23 @@ export default function NavbarP() {
           {/* Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
             <Link 
+              to="/Phome/profile" 
+              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Manage Profile
+            </Link>
+            <Link 
               to="/req" 
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Requests
+              Bookings
             </Link>
+            
             <Link 
               to="/PHome" 
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Profile
-            </Link>
-            <Link 
-              to="/Phome/profile" 
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Add Services
+              Dashboard
             </Link>
             <button
               onClick={userLogout}

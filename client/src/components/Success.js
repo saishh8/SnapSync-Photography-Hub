@@ -52,7 +52,7 @@ function Success() {
       <p className='text-center text-2xl font-semibold'>Service Name: {serviceName}</p>
       <p className='text-center text-2xl font-semibold'>Price: ₹{price}   </p>
       <p className='text-center text-2xl font-semibold'>Start Date:{startDate}</p>
-      <p className='text-center text-2xl font-semibold'>End Date:{endDate}</p>
+      {/* <p className='text-center text-2xl font-semibold'>End Date:{endDate}</p> */}
       {/* Add more content here */}
      
 

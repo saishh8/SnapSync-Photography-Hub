@@ -22,10 +22,10 @@ function Desc() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
 
   const [selectedServiceIndex, setSelectedServiceIndex] = useState(null); //highlight selected service
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-    axios.get(`http://localhost:4000/desc/${id}`)
+    axios.get(`${API_BASE_URL}/desc/${id}`)
       .then((response) => {
         setProfile(response.data);
       })
@@ -97,7 +97,7 @@ function Desc() {
     };
   
     try {
-      const response = await axios.post('http://localhost:4000/create-booking', body);
+      const response = await axios.post(`${API_BASE_URL}/create-booking`, body);
       if (response.status === 201) {
         alert('Booking created successfully!');
       } else {
@@ -160,7 +160,7 @@ function Desc() {
       "Content-Type": "application/json",
     };
     try {
-      const response = await fetch("http://localhost:4000/api/create-checkout-session", {
+      const response = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(body),
@@ -199,7 +199,7 @@ function Desc() {
               className="aspect-[4/3] overflow-hidden rounded-lg"
             >
               <img 
-                src={`http://localhost:4000/${photo}`} 
+                src={`${API_BASE_URL}/${photo}`} 
                 alt={`Photo ${index + 1}`} 
                 className="w-full h-full object-cover hover:scale-105 transition-transform"
               />
@@ -231,7 +231,7 @@ function Desc() {
             <div className="col-span-2 row-span-2">
               <img
                 onClick={() => setShowAllPhotos(true)}
-                src={`http://localhost:4000/${profile.photos[0]}`}
+                src={`${API_BASE_URL}/${profile.photos[0]}`}
                 alt="Main Photo"
                 className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition"
               />
@@ -241,7 +241,7 @@ function Desc() {
             <div key={index} className="col-span-1">
               <img
                 onClick={() => setShowAllPhotos(true)}
-                src={`http://localhost:4000/${photo}`}
+                src={`${API_BASE_URL}/${photo}`}
                 alt={`Photo ${index + 2}`}
                 className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition"
               />

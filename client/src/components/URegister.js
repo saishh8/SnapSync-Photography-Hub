@@ -55,7 +55,7 @@ function SignIn() {
 
     <div className={styles.glass} style={{width:'45%',height:'80%'}}>
 
-    <div className='title flex flex-col my-5 items-center'><Link className="underline text-black" to={'/'}>HOME</Link></div>
+    <div className='title flex flex-col my-3 items-center'><Link className=" text-black" to={'/'}>HOME</Link></div>
 
     <div className='title flex flex-col items-center'>
 

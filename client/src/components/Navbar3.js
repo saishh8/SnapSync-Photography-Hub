@@ -24,23 +24,25 @@ export default function Navbar3() {
           </div>
 
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
+
+            
+            <Link 
+              to="/Cards"
+              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Explore
+            </Link>
             <Link 
               to={`/bookings/${id}`}
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
-              Bookings
+              My Bookings
             </Link>
             <Link 
               to="/CHome"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Profile
-            </Link>
-            <Link 
-              to="/Cards"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Services
             </Link>
             <button
               onClick={userLogout}

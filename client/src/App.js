@@ -22,8 +22,9 @@ import UserProfile from './components/UserProfile';
 import Mybookings from './components/Mybookings';
 import Admin from './components/Admin';
 import AdminLogin from './components/AdminLogin';
-
-axios.defaults.baseURL='http://localhost:4000';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+console.log("API BASE URL:", API_BASE_URL); // Debugging line
+axios.defaults.baseURL=`${API_BASE_URL}`;
 
 /** root routes */
 const router = createBrowserRouter([
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
   {
     path: '/PHome',
     element: <PhotoHome/>
+  },
+  {
+    path: '/req',
+    element: <Request/>
   },
   {
     path: '/PHome/profile',

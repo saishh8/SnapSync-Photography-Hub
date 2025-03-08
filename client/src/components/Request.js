@@ -7,7 +7,7 @@ const Request = () => {
   const [requests, setRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const { id: photographerId } = getUsername();
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const TABS = [
     { id: 'all', label: 'All Requests' },
     { id: 'approval', label: 'Pending Approval' },
@@ -17,7 +17,7 @@ const Request = () => {
   ];
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/photographer/${photographerId}/bookings`);
+      const response = await axios.get(`${API_BASE_URL}/api/photographer/${photographerId}/bookings`);
       setRequests(response.data);
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -37,7 +37,7 @@ const Request = () => {
 
   const handleAccept = async (id) => {
     try {
-      await axios.patch(`http://localhost:4000/api/photographer/bookings/${id}/respond`, {
+      await axios.patch(`${API_BASE_URL}/api/photographer/bookings/${id}/respond`, {
         action: 'accepted',
         photographerId
       });
@@ -49,7 +49,7 @@ const Request = () => {
 
   const handleReject = async (id) => {
     try {
-      await axios.patch(`http://localhost:4000/api/photographer/bookings/${id}/respond`, {
+      await axios.patch(`${API_BASE_URL}/api/photographer/bookings/${id}/respond`, {
         action: 'rejected',
         photographerId
       });
