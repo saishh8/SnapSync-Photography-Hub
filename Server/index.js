@@ -38,7 +38,7 @@ mongoose.connect(process.env.DB_URI)
 
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://snapsync-photography-hub-frontend.onrender.com'],
   }));
 
 
@@ -721,7 +721,10 @@ app.put('/api/photographers/:photographerId/verify', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-app.listen(4000, () => {
-  console.log("Port is running on 4000");
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, "0.0.0.0",() => {
+  console.log(`Port is running on ${PORT}`);
 });
   
