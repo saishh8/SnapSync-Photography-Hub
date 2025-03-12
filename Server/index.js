@@ -425,8 +425,8 @@ app.put('/updateProfile', async (req, res) => {
                 endTime,
                 duration,
             },
-            success_url: `http://localhost:3000/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
-            cancel_url: `http://localhost:3000/cancel`,
+            success_url: `https://snapsync-photography-hub-frontend.onrender.com/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
+            cancel_url: `https://snapsync-photography-hub-frontend.onrender.com/cancel`,
         });
 
         // Include both session ID and URL in the response
