@@ -231,75 +231,118 @@ const Profile = () => {
           </div>
         );
       case 3:
-        return (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-semibold text-gray-800">Portfolio Images</h3>
-              {completedSteps.includes(3) && (
-                <div className="flex items-center text-green-600">
-                  <CheckIcon className="mr-2" />
-                  <span>Completed</span>
-                </div>
-              )}
-            </div>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Portfolio Images
-                </label>
-                <div className="grid grid-cols-3 gap-4">
-                {formData.addedPhotos.map(link => (
-  <div 
-    key={link} 
-    className="relative group overflow-hidden rounded-lg shadow-md"
-  >
-    <img 
-      src={`${API_BASE_URL}/`+link}
-      alt="Portfolio" 
-      onError={(e) => {
-        console.error('Image load error for link:', link);
-      }}
-      className="w-full h-48 object-cover transition duration-300 transform group-hover:scale-110"
-    />
-    <button onClick={ev => removePhoto(ev,link)} className="cursor-pointer absolute bottom-1 right-1 text-white bg-black bg-opacity-50 rounded-2xl py-2 px-3">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-      </svg>
-    </button>
-    <button onClick={ev => selectAsMainPhoto(ev,link)} className="cursor-pointer absolute bottom-1 left-1 text-white bg-black bg-opacity-50 rounded-2xl py-2 px-3">
-      {link === formData.addedPhotos[0] && (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
-        </svg>
-      )}
-      {link !== formData.addedPhotos[0] && (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-        </svg>
-      )}
-    </button>
-  </div>
-))}
-                  <label 
-                    className="border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-500 transition duration-300"
-                    onChange={(e) => {
-                      uploadPhoto(e);
-                     
-                    }}
-                  >
-                    <input 
-                      type="file" 
-                      multiple 
-                      className="hidden" 
-                    />
-                    <Image size={40} className="text-gray-400 mb-2" />
-                    <span className="text-gray-500">Upload Photos</span>
-                  </label>
-                </div>
-              </div>
-            </div>
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-semibold text-gray-800">Portfolio Images</h3>
+        {completedSteps.includes(3) && (
+          <div className="flex items-center text-green-600">
+            <CheckIcon className="mr-2" />
+            <span>Completed</span>
           </div>
-        );
+        )}
+      </div>
+
+      <div className="space-y-6">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Portfolio Images
+          </label>
+
+          {/* ✅ UPDATED GRID FOR RESPONSIVE LAYOUT */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {formData.addedPhotos.map(link => (
+              <div
+                key={link}
+                className="relative group overflow-hidden rounded-lg shadow-md"
+              >
+                <img
+                  src={`${API_BASE_URL}/` + link}
+                  alt="Portfolio"
+                  onError={(e) => {
+                    console.error('Image load error for link:', link);
+                  }}
+                  className="w-full aspect-[3/4] object-cover transition duration-300 transform group-hover:scale-110"
+                />
+
+                {/* 🗑️ Delete Button */}
+                <button
+                  onClick={ev => removePhoto(ev, link)}
+                  className="cursor-pointer absolute bottom-1 right-1 text-white bg-black bg-opacity-50 rounded-2xl py-2 px-3"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
+                    viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
+                    className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 
+                        1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 
+                        01-2.244 2.077H8.084a2.25 2.25 0 
+                        01-2.244-2.077L4.772 5.79m14.456 
+                        0a48.108 48.108 0 00-3.478-.397m-12 
+                        .562c.34-.059.68-.114 1.022-.165m0 
+                        0a48.11 48.11 0 013.478-.397m7.5 
+                        0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 
+                        51.964 0 00-3.32 0c-1.18.037-2.09 
+                        1.022-2.09 2.201v.916m7.5 0a48.667 
+                        48.667 0 00-7.5 0" />
+                  </svg>
+                </button>
+
+                {/* ⭐ Select Main Button */}
+                <button
+                  onClick={ev => selectAsMainPhoto(ev, link)}
+                  className="cursor-pointer absolute bottom-1 left-1 text-white bg-black bg-opacity-50 rounded-2xl py-2 px-3"
+                >
+                  {link === formData.addedPhotos[0] ? (
+                    // Filled star icon for main photo
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+                      fill="currentColor" className="w-6 h-6">
+                      <path fillRule="evenodd" 
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 
+                        2.424 0l2.082 5.007 5.404.433c1.164.093 
+                        1.636 1.545.749 2.305l-4.117 3.527 
+                        1.257 5.273c.271 1.136-.964 2.033-1.96 
+                        1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 
+                        2.082-5.006z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    // Outline star icon
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" 
+                      viewBox="0 0 24 24" strokeWidth={1.5} 
+                      stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M11.48 3.499a.562.562 0 011.04 
+                        0l2.125 5.111a.563.563 0 
+                        00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 
+                        3.602a.563.563 0 00-.182.557l1.285 
+                        5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 
+                        00-.586 0L6.982 20.54a.562.562 0 
+                        01-.84-.61l1.285-5.386a.562.562 0 
+                        00-.182-.557l-4.204-3.602a.563.563 0 
+                        01.321-.988l5.518-.442a.563.563 0 
+                        00.475-.345L11.48 3.5z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            ))}
+
+            {/* ✅ Upload Photos button */}
+            <label className="border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-500 transition duration-300">
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={(e) => uploadPhoto(e)}
+              />
+              <Image size={40} className="text-gray-400 mb-2" />
+              <span className="text-gray-500">Upload Photos</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
       case 4:
         return (
           <div>
@@ -406,32 +449,32 @@ const Profile = () => {
         <div className="p-8">
           {renderStepContent()}
 
-          <div className="flex justify-between mt-8">
-            {currentStep > 1 && (
-              <button 
-                onClick={() => setCurrentStep(currentStep - 1)}
-                className="flex items-center text-gray-700 px-2 py-2 rounded-lg hover:text-black transition duration-300"
-              >
-                <ArrowLeft className="mr-2" /> Previous
-              </button>
-            )}
-            
-            {currentStep < 4 ? (
-              <button 
-                onClick={() => setCurrentStep(currentStep + 1)}
-                className="ml-auto flex items-center bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-300"
-              >
-                Next <ArrowRight className="ml-2" />
-              </button>
-            ) : (
-              <button 
-                onClick={saveProfile}
-                className="ml-auto flex items-center bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800 transition duration-300"
-              >
-                <CheckCircle2 className="mr-2" /> Complete Profile
-              </button>
-            )}
-          </div>
+         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+  {currentStep > 1 && (
+    <button 
+      onClick={() => setCurrentStep(currentStep - 1)}
+      className="flex items-center text-gray-700 px-4 py-2 rounded-lg hover:text-black transition duration-300 border border-gray-300 w-full sm:w-auto"
+    >
+      <ArrowLeft className="mr-2" /> Previous
+    </button>
+  )}
+
+  {currentStep < 4 ? (
+    <button 
+      onClick={() => setCurrentStep(currentStep + 1)}
+      className="flex items-center justify-center bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-300 w-full sm:w-auto"
+    >
+      Next <ArrowRight className="ml-2" />
+    </button>
+  ) : (
+    <button 
+      onClick={saveProfile}
+      className="flex items-center justify-center bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition duration-300 w-full sm:w-auto"
+    >
+      <CheckCircle2 className="mr-2" /> Complete Profile
+    </button>
+  )}
+</div>
         </div>
       </div>
     </div>
