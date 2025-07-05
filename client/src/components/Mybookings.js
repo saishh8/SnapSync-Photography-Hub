@@ -148,7 +148,7 @@ export default function Mybookings() {
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">My Bookings</h1>
 
         <div className="mb-8">
-  <div className="flex items-center justify-center space-x-4 bg-gray-100 p-1.5 rounded-full">
+  <div className="flex items-center justify-start md:justify-center space-x-4 bg-gray-100 p-1.5 rounded-full overflow-x-auto whitespace-nowrap scrollbar-hide">
     {TABS.map((tab) => {
       
       const tabCounts = {
