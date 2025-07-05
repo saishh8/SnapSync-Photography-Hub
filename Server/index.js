@@ -260,11 +260,31 @@ app.post('/saveProfile',async (req,res)=>{
 
 app.get('/allcards', async (req, res) => {
   try {
-      const photographers = await Profile.find({}); // Use 'find' to query all documents in the collection
-      res.json(photographers); // Send the data as JSON response
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+    const skip = (page - 1) * limit;
+
+    const totalPhotographers = await Profile.countDocuments({});
+    const totalPages = Math.ceil(totalPhotographers / limit);
+
+    const photographers = await Profile.find({})
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      photographers,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalPhotographers,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
+    });
   } catch (err) {
-      console.error("Error fetching photographers:", err); // Log the error
-      res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error fetching photographers:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 // app.get('/desc/:id', async (req, res) => {
@@ -554,10 +574,18 @@ app.put('/updateProfile', async (req, res) => {
 // Backend route
 app.get('/bookings/:userId', async (req, res) => {
   const userId = req.params.userId;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+  const skip = (page - 1) * limit;
 
   try {
+    const totalBookings = await Bookings.countDocuments({ userId: userId });
+    const totalPages = Math.ceil(totalBookings / limit);
 
-    const bookings = await Bookings.find({ userId: userId });
+    const bookings = await Bookings.find({ userId: userId })
+      .skip(skip)
+      .limit(limit);
+
     const photographerIds = bookings.map(booking => booking.photographerId);
     const photographerProfiles = await ProfileModel.find({
       owner: { $in: photographerIds }
@@ -571,7 +599,17 @@ app.get('/bookings/:userId', async (req, res) => {
       photographerProfile: profileMap[booking.photographerId.toString()] || null
     }));
 
-    res.status(200).json(bookingsWithProfile);
+    res.status(200).json({
+      bookings: bookingsWithProfile,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalBookings,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
+    });
   } catch (error) {
     console.error('Error fetching bookings:', error);
     res.status(500).json({ error: 'Error fetching bookings' });
@@ -598,23 +636,39 @@ app.get('/photographers', async (req, res) => {
 
 
 //fetch photographer's bookings
-app.get('/api/photographer/:photographerId/bookings', async (req,res)=>{
+app.get('/api/photographer/:photographerId/bookings', async (req, res) => {
+  const { photographerId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+  const skip = (page - 1) * limit;
 
-    const {photographerId} = req.params;
+  try {
+    const totalBookings = await Bookings.countDocuments({ photographerId });
+    const totalPages = Math.ceil(totalBookings / limit);
 
-    try {
-      
-      const bookings = await Bookings.find({ photographerId }).populate('userId', 'fname lname');
-      console.log(bookings);
+    const bookings = await Bookings.find({ photographerId })
+      .populate('userId', 'fname lname')
+      .skip(skip)
+      .limit(limit);
 
-      res.status(200).json(bookings);
-      
-    } catch (error) {
+    console.log(bookings);
 
-      console.log('Error fetching photgrapher\'s bookings');
-      res.status(500).json({error:'Error fetching bookings'});
-      
-    }
+    res.status(200).json({
+      bookings,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: totalBookings,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
+    });
+
+  } catch (error) {
+    console.log('Error fetching photgrapher\'s bookings');
+    res.status(500).json({ error: 'Error fetching bookings' });
+  }
 });
 
 
