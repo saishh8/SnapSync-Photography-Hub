@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 
 export default function NavbarP() {
   const navigate = useNavigate();
-  
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   function userLogout() {
     localStorage.removeItem('token');
+    setMobileMenuOpen(false);
     navigate('/');
   }
 
@@ -24,21 +26,21 @@ export default function NavbarP() {
 
           {/* Navigation Links */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
-            <Link 
-              to="/Phome/profile" 
+            <Link
+              to="/Phome/profile"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Manage Profile
             </Link>
-            <Link 
-              to="/req" 
+            <Link
+              to="/req"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Bookings
             </Link>
-            
-            <Link 
-              to="/PHome" 
+
+            <Link
+              to="/PHome"
               className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Dashboard
@@ -53,7 +55,11 @@ export default function NavbarP() {
 
           {/* Mobile menu button */}
           <div className="sm:hidden">
-            <button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <button
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+            >
               <span className="sr-only">Open main menu</span>
               {/* Heroicon name: menu */}
               <svg
@@ -75,6 +81,38 @@ export default function NavbarP() {
           </div>
         </div>
       </div>
+      {/* Mobile menu, show/hide based on menu state. */}
+      {mobileMenuOpen && (
+        <div className="sm:hidden px-2 pt-2 pb-3 space-y-1 bg-black">
+          <Link
+            to="/Phome/profile"
+            className="block text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Manage Profile
+          </Link>
+          <Link
+            to="/req"
+            className="block text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Bookings
+          </Link>
+          <Link
+            to="/PHome"
+            className="block text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-colors"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <button
+            onClick={userLogout}
+            className="w-full text-left bg-white text-black hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
