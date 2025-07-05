@@ -634,7 +634,6 @@ app.get('/photographers', async (req, res) => {
 
 
 
-//fetch photographer's bookings
 app.get('/api/photographer/:photographerId/bookings', async (req, res) => {
   const { photographerId } = req.params;
   const page = parseInt(req.query.page) || 1;
