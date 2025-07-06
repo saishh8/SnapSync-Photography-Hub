@@ -41,7 +41,11 @@ function SignIn() {
       })
       .catch((error) => {
         console.error('Error during registration:', error);
-        alert('Registration failed. Please try again later.');
+        if (error.response?.data?.message) {
+          alert(error.response.data.message); // Shows 'Email already exists' if sent by server
+        } else {
+          alert('Registration failed. Please try again later.');
+        }
       });
   };
 

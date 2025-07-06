@@ -32,8 +32,7 @@ const [dateError, setDateError] = useState('');
  // Date change handler
 const handleDateChange = (e) => {
   const inputValue = e.target.value;
-  
-  // Check if input is empty
+
   if (!inputValue) {
     setDateError('');
     setStartDate('');
@@ -47,7 +46,7 @@ const handleDateChange = (e) => {
   const selectedDate = new Date(selected);
   selectedDate.setHours(0, 0, 0, 0);
 
-  // Check if the selected date is valid
+  // Check for invalid date
   if (isNaN(selectedDate.getTime())) {
     setDateError("Please enter a valid date.");
     setStartDate('');
@@ -57,83 +56,32 @@ const handleDateChange = (e) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  // Last day of current month
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const isLastDayOfMonth = today.getDate() === lastDayOfMonth.getDate();
+  const maxDate = new Date(today);
+  maxDate.setDate(today.getDate() + 31); // 31 days from today
 
-  const isSameMonth = selectedDate.getMonth() === today.getMonth();
-  const isSameYear = selectedDate.getFullYear() === today.getFullYear();
-
-  // Check if selected date is before tomorrow (includes today and past dates)
-  if (selectedDate < tomorrow) {
-    setDateError("Booking is only allowed from tomorrow onwards.");
+  if (selectedDate < tomorrow || selectedDate > maxDate) {
+    setDateError("Please select a date between tomorrow and the next 31 days.");
     setStartDate('');
-    return;
-  }
-
-  // Check if it's the same month and year
-  if (isSameMonth && isSameYear) {
-    // Valid selection - same month, from tomorrow onwards
-    setDateError('');
-    setStartDate(inputValue);
-    return;
-  }
-
-  // Check if it's the first day of next month and today is the last day of current month
-  const isFirstOfNextMonth = selectedDate.getDate() === 1 && 
-                            selectedDate.getMonth() === today.getMonth() + 1 && 
-                            selectedDate.getFullYear() === today.getFullYear();
-  
-  // Special case for December to January transition
-  const isFirstOfNextYear = selectedDate.getDate() === 1 && 
-                           selectedDate.getMonth() === 0 && 
-                           selectedDate.getFullYear() === today.getFullYear() + 1 &&
-                           today.getMonth() === 11; // December
-
-  if (isLastDayOfMonth && (isFirstOfNextMonth || isFirstOfNextYear)) {
-    // Valid selection - first day of next month when today is last day of current month
-    setDateError('');
-    setStartDate(inputValue);
-    return;
-  }
-
-  // Invalid selection
-  if (isLastDayOfMonth) {
-    setDateError("You can only book for this month or the 1st of next month (since today is the last day of the month).");
   } else {
-    setDateError("You can only book for dates within this month.");
+    setDateError('');
+    setStartDate(inputValue);
   }
-  setStartDate('');
 };
 
-// Set min to tomorrow always
-const getMinDate = () => {
+// Min = tomorrow
+const minDate = (() => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   return tomorrow.toISOString().split('T')[0];
-};
+})();
 
-// Set max date based on current date
-const getMaxDate = () => {
-  const today = new Date();
-  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0); // last day of current month
-  
-  // If today is the last day of the month, allow booking for the 1st of next month
-  if (today.getDate() === lastDay.getDate()) {
-    // Special case for December - allow January 1st of next year
-    if (today.getMonth() === 11) {
-      return new Date(today.getFullYear() + 1, 0, 1).toISOString().split('T')[0];
-    }
-    // Allow 1st of next month
-    return new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString().split('T')[0];
-  }
-  
-  // Otherwise, only allow dates within the current month
-  return lastDay.toISOString().split('T')[0];
-};
+// Max = 31 days from today
+const maxDate = (() => {
+  const max = new Date();
+  max.setDate(max.getDate() + 31);
+  return max.toISOString().split('T')[0];
+})();
 
-const minDate = getMinDate();
-const maxDate = getMaxDate();
   useEffect(() => {
     axios.get(`${API_BASE_URL}/desc/${id}`)
       .then((response) => {
@@ -438,14 +386,13 @@ const maxDate = getMaxDate();
                 <div>
                   <label className="block text-xs text-gray-600 mb-1">DATE</label>
                   <input
-                    type="date"
-                    value={startDate}
-                    onChange={handleDateChange}
-                    min={minDate}
-                    max={maxDate}
-                    required
-                    aria-label="Select booking date"
-                    className="w-full text-sm border rounded p-2"
+                      type="date"
+                      value={startDate}
+                      onChange={handleDateChange}
+                      min={minDate}
+                      max={maxDate}
+                      required
+                      className="w-full text-sm border rounded p-2"
                   />
                   {dateError && <p className="text-red-500 text-sm mt-1">{dateError}</p>}
 

@@ -59,9 +59,13 @@ app.post('/register',async (req,res)=>{
             portfolio,
             address
           });
-          res.json(userDoc);
+          res.status(201).json(userDoc);
     }catch (e) {
-        res.status(422).json(e);
+        if (e.code === 11000 && e.keyPattern?.email) {
+          res.status(422).json({ message: 'Email already exists.' });
+        } else {
+          res.status(500).json({ message: 'Something went wrong during registration.' });
+        }
       }
 });
 app.post('/uregister', async (req, res) => {
@@ -81,9 +85,12 @@ app.post('/uregister', async (req, res) => {
       });
   
       res.status(201).json(userDoc); // Send a success response with the user document
-    } catch (error) {
-      console.error('Error during user registration:', error);
-      res.status(422).json({ error: 'Registration failed' });
+    } catch (e) {
+      if (e.code === 11000 && e.keyPattern?.email) {
+          res.status(422).json({ message: 'Email already exists.' });
+        } else {
+          res.status(500).json({ message: 'Something went wrong during registration.' });
+        }
     }
   });
   app.post('/ulogin',async(req,res)=>{
