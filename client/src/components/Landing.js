@@ -24,7 +24,7 @@ export default function Landing() {
                 SnapSync - Your Photography Hub
               </h1>
               <p className="mt-6 text-lg leading-8 text-white">
-                The ultimate photography hub, where photographers of all levels can store, share, and showcase their work while connecting with a vibrant community of fellow enthusiasts.
+                From portraits to passions, SnapSync connects you with talented photographers who don’t just take pictures but capture your essence, your story, and every moment that matters to you
               </p>
 
               {/* Call-to-action buttons */}

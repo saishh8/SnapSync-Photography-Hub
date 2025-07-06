@@ -24,7 +24,7 @@ const Request = () => {
   const fetchBookings = async (page = 1) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:4000/api/photographer/${photographerId}/bookings?page=${page}&limit=6`);
+      const response = await axios.get(`${API_BASE_URL}/api/photographer/${photographerId}/bookings?page=${page}&limit=6`);
 
       // Add proper error handling and fallback values
       const bookings = response.data?.bookings || [];
@@ -42,7 +42,7 @@ const Request = () => {
       // Fetch all requests for tab counts (only on first page)
       if (page === 1) {
         try {
-          const allResponse = await axios.get(`http://localhost:4000/api/photographer/${photographerId}/bookings?page=1&limit=1000`);
+          const allResponse = await axios.get(`${API_BASE_URL}/api/photographer/${photographerId}/bookings?page=1&limit=1000`);
           const allBookings = allResponse.data?.bookings || [];
           setAllRequests(allBookings);
         } catch (allError) {

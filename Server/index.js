@@ -421,6 +421,8 @@ app.put('/updateProfile', async (req, res) => {
   app.post("/api/create-checkout-session", async (req, res) => {
     const { serviceName, price, ownerId, userId, startDate, startTime, endTime, duration } = req.body;
 
+    const host = 'https://snapsync-photography-hub-frontend.onrender.com'
+    const test = 'http://localhost:3000'
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -445,8 +447,8 @@ app.put('/updateProfile', async (req, res) => {
                 endTime,
                 duration,
             },
-            success_url: `https://snapsync-photography-hub-frontend.onrender.com/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
-            cancel_url: `https://snapsync-photography-hub-frontend.onrender.com/cancel`,
+            success_url: `${test}/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
+            cancel_url: `${test}/cancel`,
         });
 
         // Include both session ID and URL in the response

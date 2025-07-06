@@ -4,7 +4,7 @@ import Navbar3 from './Navbar3';
 import { getUsername } from "../helper/helper";
 import { loadStripe } from "@stripe/stripe-js";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const stripePromise = loadStripe("pk_test_51O2C7vSFVwLZwqIqjaMnygaWOBS5WLvW4cBMNDvx8Q6hGjWfirZc3FDYrLm0HmQDfq1dgl6xl3kA8UOJR78V7PnL00N0pwoVED");
 
 const TABS = [
@@ -29,7 +29,7 @@ export default function Mybookings() {
   const fetchBookings = async (page = 1) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:4000/bookings/${id}?page=${page}&limit=6`);
+      const response = await axios.get(`${API_BASE_URL}/bookings/${id}?page=${page}&limit=6`);
 
       // Add proper error handling and fallback values
       const bookings = response.data?.bookings || [];
@@ -47,7 +47,7 @@ export default function Mybookings() {
       // Fetch all bookings for tab counts (only on first page)
       if (page === 1) {
         try {
-          const allResponse = await axios.get(`http://localhost:4000/bookings/${id}?page=1&limit=1000`);
+          const allResponse = await axios.get(`${API_BASE_URL}/bookings/${id}?page=1&limit=1000`);
           const allBookings = allResponse.data?.bookings || [];
           setAllBookings(allBookings);
         } catch (allError) {

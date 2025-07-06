@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar3 from './Navbar3';
-
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 function Card() {
   const navigate = useNavigate();
   const [profileCards, setProfileCards] = useState([]);
@@ -21,7 +21,7 @@ function Card() {
   const fetchPhotographers = async (page = 1) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:4000/allcards?page=${page}&limit=8`);
+      const response = await axios.get(`${API_BASE_URL}/allcards?page=${page}&limit=8`);
 
       // Add proper error handling and fallback values
       const photographers = response.data?.photographers || [];
@@ -40,7 +40,7 @@ function Card() {
       // Extract unique cities from all photographers (we'll need to fetch all for filtering)
       if (page === 1) {
         try {
-          const allResponse = await axios.get(`http://localhost:4000/allcards?page=1&limit=1000`);
+          const allResponse = await axios.get(`${API_BASE_URL}/allcards?page=1&limit=1000`);
           const allPhotographers = allResponse.data?.photographers || [];
           setAllPhotographers(allPhotographers);
           const cities = [...new Set(allPhotographers.map(profile => profile.city).filter(Boolean))];
