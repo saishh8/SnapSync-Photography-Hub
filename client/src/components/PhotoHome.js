@@ -16,11 +16,11 @@ export default function PhotoHome() {
       axios.get(`/user/${email}`)
         .then(res => {
           setPhotographerData(res.data);
-          return axios.get(`/api/photographer/${res.data._id}/bookings`);
+          return axios.get(`/api/photographer/${res.data._id}/bookings?all=true`);
         })
         .then(bookingsRes => {
           // Filter only confirmed bookings (status: 'booked')
-          const confirmedBookings = bookingsRes.data.filter(
+          const confirmedBookings = bookingsRes.data.bookings.filter(
             booking => booking.status === 'booked'
           );
           setBookings(confirmedBookings);
@@ -31,13 +31,13 @@ export default function PhotoHome() {
     }
   }, []);
 
-  const upcomingBookings = bookings.filter(booking => 
-    moment(booking.startDate).isAfter(moment())
-  );
+  const upcomingBookings = bookings.filter(booking =>
+  moment(`${booking.startDate} ${booking.startTime}`, 'YYYY-MM-DD HH:mm').isSameOrAfter(moment())
+);
 
-  const completedBookings = bookings.filter(booking => 
-    moment(booking.startDate).isBefore(moment())
-  );
+const completedBookings = bookings.filter(booking =>
+  moment(`${booking.startDate} ${booking.startTime}`, 'YYYY-MM-DD HH:mm').isBefore(moment())
+);
 
   return (
     <div className="min-h-screen bg-gray-50">

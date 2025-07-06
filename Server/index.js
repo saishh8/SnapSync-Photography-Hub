@@ -582,17 +582,25 @@ app.put('/updateProfile', async (req, res) => {
 // Backend route
 app.get('/bookings/:userId', async (req, res) => {
   const userId = req.params.userId;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 6;
-  const skip = (page - 1) * limit;
+  const fetchAll = req.query.all === 'true';
+
+  let page = 1;
+  let limit = 0;
+  let skip = 0;
+
+  if (!fetchAll) {
+    page = parseInt(req.query.page) || 1;
+    limit = parseInt(req.query.limit) || 6;
+    skip = (page - 1) * limit;
+  }
 
   try {
     const totalBookings = await Bookings.countDocuments({ userId: userId });
-    const totalPages = Math.ceil(totalBookings / limit);
+    const totalPages = fetchAll ? 1 : Math.ceil(totalBookings / limit);
 
     const bookings = await Bookings.find({ userId: userId })
       .skip(skip)
-      .limit(limit);
+      .limit(fetchAll ? 0 : limit);
 
     const photographerIds = bookings.map(booking => booking.photographerId);
     const photographerProfiles = await ProfileModel.find({
@@ -645,20 +653,26 @@ app.get('/photographers', async (req, res) => {
 
 app.get('/api/photographer/:photographerId/bookings', async (req, res) => {
   const { photographerId } = req.params;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 6;
-  const skip = (page - 1) * limit;
+  const fetchAll = req.query.all === 'true';
+
+  let page = 1;
+  let limit = 0;
+  let skip = 0;
+
+  if (!fetchAll) {
+    page = parseInt(req.query.page) || 1;
+    limit = parseInt(req.query.limit) || 6;
+    skip = (page - 1) * limit;
+  }
 
   try {
     const totalBookings = await Bookings.countDocuments({ photographerId });
-    const totalPages = Math.ceil(totalBookings / limit);
+    const totalPages = fetchAll ? 1 : Math.ceil(totalBookings / limit);
 
     const bookings = await Bookings.find({ photographerId })
       .populate('userId', 'fname lname')
       .skip(skip)
-      .limit(limit);
-
-    console.log(bookings);
+      .limit(fetchAll ? 0 : limit); // limit(0) returns all documents
 
     res.status(200).json({
       bookings,
@@ -673,7 +687,7 @@ app.get('/api/photographer/:photographerId/bookings', async (req, res) => {
     });
 
   } catch (error) {
-    console.log('Error fetching photgrapher\'s bookings');
+    console.log("Error fetching photographer's bookings");
     res.status(500).json({ error: 'Error fetching bookings' });
   }
 });

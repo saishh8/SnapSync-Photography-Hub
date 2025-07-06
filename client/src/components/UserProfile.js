@@ -18,14 +18,27 @@ export default function UserProfile() {
           setClientData(res.data);
           
           // Fetch bookings for the client
-          return axios.get(`/bookings/${res.data._id}`);
+          return axios.get(`/bookings/${res.data._id}?all=true`);
         })
         .then(bookingsRes => {
+            console.log("Raw bookings response:", bookingsRes.data);
             // Filter only confirmed bookings (status: 'booked')
-            const confirmedBookings = bookingsRes.data.filter(
+            const confirmedBookings = bookingsRes.data.bookings.filter(
               booking => booking.status === 'booked'
             );
             setBookings(confirmedBookings);
+            confirmedBookings.forEach((booking, i) => {
+  const datetime = `${booking.startDate} ${booking.startTime}`;
+  const parsed = moment(datetime, 'YYYY-MM-DD HH:mm');
+  console.log(`Booking #${i + 1}`, {
+    raw: datetime,
+    parsed: parsed.format(),
+    isValid: parsed.isValid(),
+    now: moment().format(),
+    isFuture: parsed.isSameOrAfter(moment())
+  });
+});
+
           })
         .catch(error => {
           console.log(error);
@@ -35,16 +48,19 @@ export default function UserProfile() {
 
   // Calculate booking statistics
   const upcomingBookings = bookings.filter(booking => 
-    moment(booking.startDate).isAfter(moment())
-  );
+  moment(`${booking.startDate} ${booking.startTime}`, 'YYYY-MM-DD HH:mm').isSameOrAfter(moment())
+);
+
 
   const completedBookings = bookings.filter(booking => 
-    moment(booking.startDate).isBefore(moment())
-  );
+  moment(`${booking.startDate} ${booking.startTime}`, 'YYYY-MM-DD HH:mm').isBefore(moment())
+);
+
 
   const nextSession = upcomingBookings.length > 0 
-    ? moment(upcomingBookings[0].startDate).format('MMM DD') 
-    : 'No upcoming sessions';
+  ? moment(`${upcomingBookings[0].startDate} ${upcomingBookings[0].startTime}`, 'YYYY-MM-DD HH:mm').format('MMM DD')
+  : 'No upcoming sessions';
+
 
   return (
     <div className="min-h-screen bg-gray-50">
