@@ -8,7 +8,6 @@ const Request = () => {
   const [requests, setRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
   const [allRequests, setAllRequests] = useState([]);
@@ -36,7 +35,6 @@ const Request = () => {
 
       setRequests(bookings);
       setCurrentPage(pagination.currentPage);
-      setTotalPages(pagination.totalPages);
       setTotalItems(pagination.totalItems);
 
       // Fetch all requests for tab counts (only on first page)
@@ -55,14 +53,13 @@ const Request = () => {
       // Set fallback values on error
       setRequests([]);
       setCurrentPage(1);
-      setTotalPages(1);
       setTotalItems(0);
       setAllRequests([]);
     } finally {
       setLoading(false);
     }
   };
-  const filteredRequests = requests.filter(request => {
+  const filteredRequests = allRequests.filter(request => {
     if (activeTab === 'all') return true;
     if (activeTab === 'approval') return request.status === 'approval required';
     if (activeTab === 'payment') return request.status === 'payment pending';
@@ -70,6 +67,9 @@ const Request = () => {
     if (activeTab === 'rejected') return request.status === 'rejected';
     return false;
   });
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  const paginatedRequests = filteredRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   useEffect(() => {
     fetchBookings(currentPage);
   }, [photographerId, currentPage]);
@@ -219,7 +219,10 @@ const Request = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setCurrentPage(1);
+                  }}
                   className={`
                     px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
                     ${activeTab === tab.id
@@ -255,7 +258,7 @@ const Request = () => {
         {/* Requests Grid */}
         {!loading && (
           <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {filteredRequests && filteredRequests.length > 0 && filteredRequests.map((request) => (
+            {paginatedRequests && paginatedRequests.length > 0 && paginatedRequests.map((request) => (
               <div
                 key={request._id}
                 className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-md"
@@ -316,7 +319,7 @@ const Request = () => {
         {/* Results Info */}
         {!loading && (
           <div className="text-center mt-4 text-sm text-gray-500">
-            Showing {((currentPage - 1) * 6) + 1} to {Math.min(currentPage * 6, totalItems)} of {totalItems} requests
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} requests
           </div>
         )}
 

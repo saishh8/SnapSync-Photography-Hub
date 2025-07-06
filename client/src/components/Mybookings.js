@@ -22,7 +22,6 @@ export default function Mybookings() {
   const [loading, setLoading] = useState(false);
   const [paymentLoadingId, setPaymentLoadingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [allBookings, setAllBookings] = useState([]);
 
@@ -41,7 +40,6 @@ export default function Mybookings() {
 
       setBookings(bookings);
       setCurrentPage(pagination.currentPage);
-      setTotalPages(pagination.totalPages);
       setTotalItems(pagination.totalItems);
 
       // Fetch all bookings for tab counts (only on first page)
@@ -60,7 +58,6 @@ export default function Mybookings() {
       // Set fallback values on error
       setBookings([]);
       setCurrentPage(1);
-      setTotalPages(1);
       setTotalItems(0);
       setAllBookings([]);
     } finally {
@@ -102,7 +99,7 @@ export default function Mybookings() {
     }
   };
 
-  const filteredBookings = bookings.filter(booking => {
+  const filteredBookings = allBookings.filter(booking => {
     if (activeTab === 'all') return true;
     if (activeTab === 'approval') return booking.status === 'approval required';
     if (activeTab === 'payment') return booking.status === 'payment pending';
@@ -110,6 +107,10 @@ export default function Mybookings() {
     if (activeTab === 'rejected') return booking.status === 'rejected';
     return false;
   });
+
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+  const paginatedBookings = filteredBookings.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -285,7 +286,12 @@ export default function Mybookings() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setCurrentPage(1);
+
+                  }}
+
                   className={`
             px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
             ${activeTab === tab.id
@@ -321,7 +327,7 @@ export default function Mybookings() {
         {/* Bookings Grid */}
         {!loading && (
           <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {filteredBookings && filteredBookings.length > 0 && filteredBookings.map((booking) => (
+            {paginatedBookings && paginatedBookings.length > 0 && paginatedBookings.map((booking) => (
               <BookingCard key={booking._id} booking={booking} />
             ))}
           </div>
@@ -333,7 +339,7 @@ export default function Mybookings() {
         {/* Results Info */}
         {!loading && (
           <div className="text-center mt-4 text-sm text-gray-500">
-            Showing {((currentPage - 1) * 6) + 1} to {Math.min(currentPage * 6, totalItems)} of {totalItems} bookings
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredBookings.length)} of {filteredBookings.length} bookings
           </div>
         )}
 
