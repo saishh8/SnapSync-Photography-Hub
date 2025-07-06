@@ -19,24 +19,29 @@ In the contemporary digital landscape, freelance photographers often encounter s
 ![service page](https://github.com/user-attachments/assets/a791aea1-0332-4c11-a0a0-13c0a4ce13bf)
 
 
-#Client - Service Payment
+# Client - Service Payment
 ![payment req](https://github.com/user-attachments/assets/3a924c83-3a94-4943-a132-d157348d9279)
 ![payment gateway](https://github.com/user-attachments/assets/b0c37a6d-b7c2-4df1-8bc1-385e6c2da72c)
 ![success](https://github.com/user-attachments/assets/832625f4-bf58-42bc-96ae-77c45345e6ea)
 
-#Client - Completed Bookings
+# Client - Completed Bookings
 ![confirmed bookings](https://github.com/user-attachments/assets/6be1ec3d-447d-4488-86bb-f364dd08fb0c)
 
 
-Photographer - Dashboard Page
+# Photographer - Dashboard Page
 ![dashboard photographer](https://github.com/user-attachments/assets/672a11a2-8164-4c4b-b1f4-75fcba05694f)
 
 
-Photographer - Profile Setup
+# Photographer - Profile Setup
 ![profile Setup](https://github.com/user-attachments/assets/061368e3-7b20-4d6f-a66e-ca618153db32)
 ![location setup](https://github.com/user-attachments/assets/e5c2c230-fdf5-4a92-8811-271e54905932)
 ![portfolio images](https://github.com/user-attachments/assets/7190d1e6-109e-4434-9eca-41df5e1b15b4)
 ![add service](https://github.com/user-attachments/assets/4b94790b-ef5e-4430-a9c5-ebb89ffbf2c8)
+
+
+# Photographer - Booking Requests
+![image](https://github.com/user-attachments/assets/72858913-7c71-49de-96e9-67815c702d07)
+
 
 
 # Admin View
