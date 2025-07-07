@@ -239,7 +239,8 @@ function Card() {
                 onClick={() => handleCardClick(profile._id)}
               >
                 <img
-                  src={`http://localhost:4000/${profile.photos[0]}`}
+                  // src={`http://localhost:4000/${profile.photos[0]}`}
+                  src={profile.photos[0]}
                   alt="Profile"
                   className="w-full h-48 object-cover"
                 />

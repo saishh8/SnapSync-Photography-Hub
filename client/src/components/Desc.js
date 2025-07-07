@@ -257,7 +257,8 @@ const maxDate = (() => {
               className="aspect-[4/3] overflow-hidden rounded-lg"
             >
               <img 
-                src={`${API_BASE_URL}/${photo}`} 
+                // src={`${API_BASE_URL}/${photo}`}
+                src={photo}
                 alt={`Photo ${index + 1}`} 
                 className="w-full h-full object-cover hover:scale-105 transition-transform"
               />
@@ -290,7 +291,8 @@ const maxDate = (() => {
           <div className="col-span-2 row-span-2">
             <img
               onClick={() => setShowAllPhotos(true)}
-              src={`${API_BASE_URL}/${profile.photos[0]}`}
+              // src={`${API_BASE_URL}/${profile.photos[0]}`}
+              src={profile.photos[0]}
               alt="Main Photo"
               className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition"
             />
@@ -300,7 +302,8 @@ const maxDate = (() => {
           <div key={index} className="col-span-1">
             <img
               onClick={() => setShowAllPhotos(true)}
-              src={`${API_BASE_URL}/${photo}`}
+              // src={`${API_BASE_URL}/${photo}`}
+              src={photo}
               alt={`Photo ${index + 2}`}
               className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition"
             />
