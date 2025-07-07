@@ -468,8 +468,8 @@ app.put('/updateProfile', async (req, res) => {
                 endTime,
                 duration,
             },
-            success_url: `${test}/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
-            cancel_url: `${test}/cancel`,
+            success_url: `${host}/success?ownerId=${ownerId}&userId=${userId}&startDate=${startDate}&startTime=${startTime}&endTime=${endTime}&duration=${duration}&serviceName=${serviceName}&price=${price}`,
+            cancel_url: `${host}/cancel`,
         });
 
         // Include both session ID and URL in the response
