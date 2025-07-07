@@ -257,7 +257,8 @@ const Profile = () => {
                 className="relative group overflow-hidden rounded-lg shadow-md"
               >
                 <img
-                  src={`${API_BASE_URL}/` + link}
+                  // src={`${API_BASE_URL}/` + link}
+                  src={link}
                   alt="Portfolio"
                   onError={(e) => {
                     console.error('Image load error for link:', link);

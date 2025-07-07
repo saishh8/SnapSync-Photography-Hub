@@ -7,10 +7,13 @@ const Profile = require('./models/Profile.js');  //profile model
 const Bookings = require('./models/Booking.js');  //profile model  
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const ProfileModel = require('./models/Profile.js');
+
+const multer = require('multer');
+const {storage} = require('./utils/cloudinary.js')
+const photosMiddleware = multer({storage});
 
 require('dotenv').config();
 
@@ -29,7 +32,7 @@ const app = express();
 
 
 
-app.use('/uploads', express.static('uploads'));
+// app.use('/uploads', express.static('uploads')); // for local storage of images
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -228,19 +231,30 @@ app.get('/client/:email',async(req,res)=>{
 
 
 //////
-const photosMiddleware = multer({dest:'uploads/'});
-app.post('/upload', photosMiddleware.array('photos', 100), (req,res) => {
-    const uploadedFiles = [];
-    for (let i = 0; i < req.files.length; i++) {
-      const {path,originalname} = req.files[i];
-      const parts=originalname.split('.');
-      const ext=parts[parts.length-1];
-      const newPath=path+'.'+ext;
-      fs.renameSync(path,newPath);
-      uploadedFiles.push(newPath);
-    }
-    res.json(uploadedFiles);
-});
+
+
+
+// const photosMiddleware = multer({dest:'uploads/'}); // for storing images locally
+
+// app.post('/upload', photosMiddleware.array('photos', 100), (req,res) => {
+//     const uploadedFiles = [];
+//     for (let i = 0; i < req.files.length; i++) {
+//       const {path,originalname} = req.files[i];
+//       const parts=originalname.split('.');
+//       const ext=parts[parts.length-1];
+//       const newPath=path+'.'+ext;
+//       fs.renameSync(path,newPath);
+//       uploadedFiles.push(newPath);
+//     }
+//     res.json(uploadedFiles);
+// });
+
+
+app.post('/upload',photosMiddleware.array('photos',100), (req,res)=>{
+
+  const uploadedFiles = req.files.map(file => file.path) // Cloudinary returns `file.path` as URL
+  res.json(uploadedFiles)
+})
     
 
 app.post('/saveProfile',async (req,res)=>{
